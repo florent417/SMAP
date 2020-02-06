@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Implicer</string>
+    <string name="AppWelcome">Welcome to the Alarm setter!</string>
+    <string name="setAlarmTxt">Set your alarm</string>
+</resources>
