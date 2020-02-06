@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Switching Activities</string>
+    <string name="btnToScndAct">Send me to next screen</string>
+    <string name="btnBackToMainAct">Send me back to main screen!</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">View Activity</string>
+    <string name="editBtn">Edit Me!</string>
+    <string name="usrHint">Type your message here</string>
+    <string name="okBtn">Ok</string>
+    <string name="cancelBtn">Cancel</string>
+</resources>
