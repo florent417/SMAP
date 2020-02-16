@@ -3,4 +3,14 @@
     <string name="pickerDemo">Picker</string>
     <string name="editTxtDemo">Edit Text</string>
     <string name="slidersDemo">Slider</string>
+    <string name="cancelBtnTxt">Cancel</string>
+    <string name="okBtnTxt">OK</string>
+    <string name="toastDefaultText">This is a custom toast!</string>
+    <string name="msgTxt">Write your message</string>
+    <string name="emailHint">Email</string>
+    <string name="numbHint">Favourite Number</string>
+    <string name="passHint">Password</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
 </resources>
