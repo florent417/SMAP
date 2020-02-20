@@ -4,6 +4,7 @@ public class WordListItem {
     private String word, pronounciation, rating;
     private int imgResNbr;
 
+
     public WordListItem(String word, String pronounciation, String rating, int imgResNbr){
         this.word = word;
         this.pronounciation = pronounciation;
