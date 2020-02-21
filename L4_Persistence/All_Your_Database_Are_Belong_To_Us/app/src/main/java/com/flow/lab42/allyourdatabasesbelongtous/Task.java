@@ -5,8 +5,6 @@ import androidx.room.PrimaryKey;
 
 @Entity (tableName = "task")
 public class Task {
-
-
     @PrimaryKey(autoGenerate = true)
     public int taskId;
 
@@ -36,6 +34,4 @@ public class Task {
     public void setPlace(String place) {
         this.place = place;
     }
-
-
 }

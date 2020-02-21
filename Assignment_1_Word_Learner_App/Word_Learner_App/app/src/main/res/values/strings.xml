@@ -1,4 +1,14 @@
 <resources>
-    <string name="app_name">Word Learner App</string>
-    <string name="mainTitle">My Words:</string>
+    <string name="app_name">Word Learner</string>
+    <string name="mainTitle">My Words</string>
+    <string name="exitBtn">Exit</string>
+    <string name="cancelBtn">Cancel</string>
+    <string name="editBtn">Edit</string>
+    <string name="description">Description</string>
+    <string name="detailsNotes">Notes</string>
+
+    <string name="wordExtra">description extra</string>
+    <string name="pronunciationExtra">pronunciation extra</string>
+    <string name="ratingExtra">rating extra</string>
+    <string name="imgResNbrExtra">img res nbr extra</string>
 </resources>

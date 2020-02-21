@@ -14,8 +14,8 @@ import com.facebook.stetho.Stetho;
 public class MainActivity extends AppCompatActivity {
 
     private static final String DATABASE_NAME = "task-database";
-    EditText task, place;
-    Button addTaskBtn;
+    private EditText task, place;
+    private Button addTaskBtn;
     private TaskDatabase db;
 
     @Override
@@ -25,9 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
         Stetho.initializeWithDefaults(this);
 
-
-        db = Room.databaseBuilder(this,
-                TaskDatabase.class, DATABASE_NAME).allowMainThreadQueries()
+        db = Room.databaseBuilder(this, TaskDatabase.class, DATABASE_NAME)
+                .allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .build();
 
@@ -42,14 +41,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Task newTask = new Task(task.getText().toString(), place.getText().toString());
-            // add to DB
-
-            //Task newItems[] = new Task[]{newTask};
-
 
             db.taskDAO().insertAllTasks(newTask);
         }
     };
-
-
 }
