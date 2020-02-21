@@ -7,8 +7,9 @@
     <string name="description">Description</string>
     <string name="detailsNotes">Notes</string>
 
-    <string name="wordExtra">description extra</string>
-    <string name="pronunciationExtra">pronunciation extra</string>
-    <string name="ratingExtra">rating extra</string>
-    <string name="imgResNbrExtra">img res nbr extra</string>
+    <string name="wordExtra">wordExtra</string>
+    <string name="pronunciationExtra">pronunciationExtra</string>
+    <string name="ratingExtra">ratingExtra</string>
+    <string name="imgResNbrExtra">imgResNbrExtra</string>
+    <string name="imgDescription">The image given the word</string>
 </resources>

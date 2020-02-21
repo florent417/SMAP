@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                intent.putExtra("user saved message",editUsrInput.getText().toString());
                 startActivityForResult(intent, editActivityReqCode);
             }
         });

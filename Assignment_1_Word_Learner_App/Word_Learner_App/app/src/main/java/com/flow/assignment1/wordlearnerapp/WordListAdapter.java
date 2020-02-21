@@ -3,8 +3,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +28,10 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View newView = LayoutInflater.from(parent.getContext())
+        View wordListItemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.word_item,parent,false);
 
-        return new ViewHolder(newView);
+        return new ViewHolder(wordListItemView);
     }
 
     @Override
@@ -55,6 +53,7 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView word, pronunciation, wordRating;
         private ImageView imgView;
+        String wordKey, pronunciationKey, imgResNbrKey, ratingKey;
         // Should this be a resource?
         private final int EDIT_REQ = 1;
         // for image resource number
@@ -68,6 +67,13 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
             wordRating = itemView.findViewById(R.id.wordRating);
             imgView = itemView.findViewById(R.id.wordImage);
 
+            // Resources implementation influenced from here
+            // https://stackoverflow.com/questions/41007837/how-to-use-getresources-on-a-adapter-java
+            wordKey = itemView.getContext().getString(R.string.wordExtra);
+            pronunciationKey = itemView.getContext().getString(R.string.pronunciationExtra);
+            imgResNbrKey = itemView.getContext().getString(R.string.imgResNbrExtra);
+            ratingKey = itemView.getContext().getString(R.string.ratingExtra);
+
             // The implementation for onclicklisteners is influenced by this
             // https://medium.com/@CodyEngel/4-ways-to-implement-onclicklistener-on-android-9b956cbd2928
             itemView.setOnClickListener(itemViewClickListener);
@@ -79,22 +85,11 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
             public void onClick(View wordItemView) {
                 Intent intent = new Intent(wordItemView.getContext(), DetailsActivity.class);
 
-                // Resources implementation found here
-                // https://stackoverflow.com/questions/4253328/getstring-outside-of-a-context-or-activity/8765766
-                //String wordKey = Resources.getSystem().getString(R.string.wordExtra);
-                //String pronunciationKey = Resources.getSystem().getString(R.string.pronunciationExtra);
-                //String imgResNbrKey = Resources.getSystem().getString(R.string.imgResNbrExtra);
-                //String ratingKey = Resources.getSystem().getString(R.string.ratingExtra);
-
-                String wordKey = "wordExtra";
-                 String pronunciationKey = "pronunciationExtra";
-                 String ratingKey = "ratingExtra";
-                 String imgResNbrKey = "imgResNbrExtra";
                 intent.putExtra(wordKey, word.getText().toString());
                 intent.putExtra(pronunciationKey, pronunciation.getText().toString());
                 intent.putExtra(imgResNbrKey, imageResNbr);
                 intent.putExtra(ratingKey, wordRating.getText().toString());
-                // This does not get sent, since in details it is null
+
                 ((Activity) wordItemView.getContext()).startActivityForResult(intent,EDIT_REQ);
             }
         };
