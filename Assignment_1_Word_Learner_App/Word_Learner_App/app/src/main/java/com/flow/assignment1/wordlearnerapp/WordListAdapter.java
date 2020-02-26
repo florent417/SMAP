@@ -14,7 +14,7 @@ import java.util.ArrayList;
 * https://www.youtube.com/watch?v=5T144CbTwjc&list=PLk7v1Z2rk4hjHrGKo9GqOtLs1e2bglHHA&index=2&fbclid=IwAR16HBg3NMwz2uDT9gbiUgP6QquDEVK5S1UEx3nz49kTvtU_Wisl9XpowUc*/
 
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHolder> {
-    private ArrayList<WordListItem> wordListItems;
+    public ArrayList<WordListItem> wordListItems;
     private Context context;
     private OnItemListClickListener mOnItemListClick;
 

@@ -58,8 +58,16 @@ public class ListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_REQ && resultCode == RESULT_OK){
             if (data != null){
-                WordListItem test = adapter.getWordListItem(data.getIntExtra(getString(R.string.POSITION_EXTRA),0));
-                test.setRating(data.getStringExtra(getString(R.string.RATING_EXTRA)));
+                WordListAdapter.ViewHolder wordItem = (WordListAdapter.ViewHolder) recyclerView
+                        .findViewHolderForAdapterPosition(data.getIntExtra
+                                (getString(R.string.POSITION_EXTRA),0));
+
+                if (wordItem != null){
+                    wordItem.wordRating.setText(data.getStringExtra(getString(R.string.RATING_EXTRA)));
+                }
+                WordListItem wordListItem = adapter.getWordListItem(data.getIntExtra(getString(R.string.POSITION_EXTRA),0));
+                wordListItem.setRating(data.getStringExtra(getString(R.string.RATING_EXTRA)));
+                adapter.wordListItems.set(data.getIntExtra(getString(R.string.POSITION_EXTRA),0), wordListItem);
             }
         }
     }
@@ -77,7 +85,10 @@ public class ListActivity extends AppCompatActivity {
     private WordListAdapter.OnItemListClickListener onItemListClickListener = new WordListAdapter.OnItemListClickListener() {
         @Override
         public void onItemListClick(int position) {
+            // Dont't know if this is clever or it should be updated to do update on the arraylist
+            // or if it should be added from the viewholder
             Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
+            //adapter.
             WordListItem test = adapter.getWordListItem(position);
             intent.putExtra(wordKey, test.getWord());
             intent.putExtra(pronunciationKey, test.getPronunciation());

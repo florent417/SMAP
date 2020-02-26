@@ -37,6 +37,7 @@ public class DetailsActivity extends AppCompatActivity {
             word.setText(intentBundle.getString(getString(R.string.WORD_EXTRA)));
             pronunciation.setText(intentBundle.getString(getString(R.string.PRONUNCIATION_EXTRA)));
             rating.setText(intentBundle.getString(getString(R.string.RATING_EXTRA)));
+            Log.d("DETAILS RATING", rating.getText().toString());
             // Set a sample photo? Value for that?
             wordItemPos = intentBundle.getInt(getString(R.string.POSITION_EXTRA));
             wordImage.setImageResource(intentBundle.getInt(getString(R.string.IMGRESNBR_EXTRA)));
