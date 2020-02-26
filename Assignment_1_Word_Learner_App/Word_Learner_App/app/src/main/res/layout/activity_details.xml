@@ -8,8 +8,8 @@
 
     <EditText
         android:id="@+id/detailsWordRating"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/wordRaterBoxSize"
+        android:layout_height="@dimen/wordRaterBoxSize"
         android:layout_marginBottom="16dp"
         android:clickable="false"
         android:cursorVisible="false"

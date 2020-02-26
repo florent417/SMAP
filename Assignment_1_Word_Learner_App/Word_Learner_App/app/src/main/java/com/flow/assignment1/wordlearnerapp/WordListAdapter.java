@@ -1,8 +1,5 @@
 package com.flow.assignment1.wordlearnerapp;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +16,25 @@ import java.util.ArrayList;
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHolder> {
     private ArrayList<WordListItem> wordListItems;
     private Context context;
+    private OnItemListClickListener mOnItemListClick;
 
     public WordListAdapter(Context context, ArrayList<WordListItem> wordListItems) {
         this.wordListItems = wordListItems;
         this.context = context;
+    }
+
+    // The implementation on onclicklisteners with adapters and recycleviews is influenced by:
+    // https://www.youtube.com/watch?v=WtLZK1kh-yM
+    public interface OnItemListClickListener {
+        void onItemListClick(int position);
+    }
+
+    void setOnItemListClickListener(OnItemListClickListener itemListClickListener){
+        mOnItemListClick = itemListClickListener;
+    }
+
+    public WordListItem getWordListItem(int position){
+        return wordListItems.get(position);
     }
 
     @NonNull
@@ -42,7 +54,6 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         holder.pronunciation.setText(wordListItem.getPronunciation());
         holder.wordRating.setText(wordListItem.getRating());
         holder.imgView.setImageResource(wordListItem.getImgResNbr());
-        holder.imageResNbr = wordListItem.getImgResNbr();
     }
 
     @Override
@@ -50,14 +61,9 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         return wordListItems.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView word, pronunciation, wordRating;
-        private ImageView imgView;
-        String wordKey, pronunciationKey, imgResNbrKey, ratingKey;
-        // Should this be a resource?
-        private final int EDIT_REQ = 1;
-        // for image resource number
-        private int imageResNbr;
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView word, pronunciation, wordRating;
+        public ImageView imgView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,30 +73,18 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
             wordRating = itemView.findViewById(R.id.wordRating);
             imgView = itemView.findViewById(R.id.wordImage);
 
-            // Resources implementation influenced from here
-            // https://stackoverflow.com/questions/41007837/how-to-use-getresources-on-a-adapter-java
-            wordKey = itemView.getContext().getString(R.string.wordExtra);
-            pronunciationKey = itemView.getContext().getString(R.string.pronunciationExtra);
-            imgResNbrKey = itemView.getContext().getString(R.string.imgResNbrExtra);
-            ratingKey = itemView.getContext().getString(R.string.ratingExtra);
-
-            // The implementation for onclicklisteners is influenced by this
-            // https://medium.com/@CodyEngel/4-ways-to-implement-onclicklistener-on-android-9b956cbd2928
-            itemView.setOnClickListener(itemViewClickListener);
+            itemView.setOnClickListener(itemOnClickListener);
         }
-        // Code was inspired by this post:
-        // https://stackoverflow.com/questions/48696477/how-to-implement-startactivityforresult-in-recyclerview
-        private View.OnClickListener itemViewClickListener = new View.OnClickListener() {
+
+        private View.OnClickListener itemOnClickListener = new View.OnClickListener() {
             @Override
-            public void onClick(View wordItemView) {
-                Intent intent = new Intent(wordItemView.getContext(), DetailsActivity.class);
-
-                intent.putExtra(wordKey, word.getText().toString());
-                intent.putExtra(pronunciationKey, pronunciation.getText().toString());
-                intent.putExtra(imgResNbrKey, imageResNbr);
-                intent.putExtra(ratingKey, wordRating.getText().toString());
-
-                ((Activity) wordItemView.getContext()).startActivityForResult(intent,EDIT_REQ);
+            public void onClick(View v) {
+                if(mOnItemListClick != null){
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION){
+                        mOnItemListClick.onItemListClick(position);
+                    }
+                }
             }
         };
     }

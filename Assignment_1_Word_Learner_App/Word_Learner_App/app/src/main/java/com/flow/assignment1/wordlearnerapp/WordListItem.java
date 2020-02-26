@@ -4,10 +4,15 @@ public class WordListItem {
     private String word, pronunciation, rating;
     private int imgResNbr;
 
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+// Set default rating to 0.0 and add getters and setters
 
-    public WordListItem(String word, String pronounciation, String rating, int imgResNbr){
+
+    public WordListItem(String word, String pronunciation, String rating, int imgResNbr){
         this.word = word;
-        this.pronunciation = pronounciation;
+        this.pronunciation = pronunciation;
         this.rating = rating;
         this.imgResNbr = imgResNbr;
     }
