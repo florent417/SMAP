@@ -8,9 +8,9 @@
 
     <EditText
         android:id="@+id/editWordRating"
-        android:layout_width="@dimen/wordRaterBoxSize"
-        android:layout_height="@dimen/wordRaterBoxSize"
-        android:layout_marginTop="8dp"
+        android:layout_width="@dimen/wordRaterLandSize"
+        android:layout_height="@dimen/wordRaterLandSize"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:clickable="false"
@@ -28,7 +28,8 @@
         android:id="@+id/editWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
+        android:textSize="@dimen/editTxtSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -51,22 +52,28 @@
         android:id="@+id/editNotesTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="32dp"
         android:text="@string/notesTitle"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wordRater" />
 
     <EditText
         android:id="@+id/notesInput"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="@dimen/notesTxtSize"
+        app:layout_constraintEnd_toEndOf="@+id/editWordRating"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editNotesTxt" />
 
@@ -96,10 +103,13 @@
         android:id="@+id/editWordRatingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/wordRatingTxt"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/editWordRating"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editWord" />
+        app:layout_constraintTop_toTopOf="@+id/editWordRating"
+        app:layout_constraintVertical_bias="0.49" />
 </androidx.constraintlayout.widget.ConstraintLayout>

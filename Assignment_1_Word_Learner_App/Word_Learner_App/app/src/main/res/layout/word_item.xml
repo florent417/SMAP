@@ -15,10 +15,12 @@
             android:id="@+id/wordImage"
             android:layout_width="@dimen/smallImgDim"
             android:layout_height="@dimen/smallImgDim"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/imgDescription"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,6 +32,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:padding="2dp"
+            android:textSize="@dimen/wordItemTxtSize"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/wordImage"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,14 +45,14 @@
             android:layout_marginLeft="24dp"
             android:layout_marginTop="4dp"
             android:padding="2dp"
+            android:textSize="@dimen/wordItemTxtSize"
             app:layout_constraintStart_toEndOf="@+id/wordImage"
             app:layout_constraintTop_toBottomOf="@+id/word" />
 
         <EditText
             android:id="@+id/wordRating"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="@dimen/wordRaterBoxSize"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:clickable="false"
@@ -60,6 +63,8 @@
             android:focusableInTouchMode="false"
             android:gravity="center"
             android:inputType="none"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
