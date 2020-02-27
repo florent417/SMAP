@@ -13,7 +13,6 @@ public class EditActivity extends AppCompatActivity {
     private TextView wordName, wordRating, wordNotes;
     private Button cancelBtn, okBtn;
     private SeekBar rater;
-    private int wordItemPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +35,8 @@ public class EditActivity extends AppCompatActivity {
             float ratingFloatVal = Float.parseFloat(ratingStrVal) * 10;
             int ratingIntVal = (int) ratingFloatVal;
             rater.setProgress(ratingIntVal);
-            wordItemPos = wordListItem.getWordPosition();
             // Check if there are any notes
             wordNotes.setText(wordListItem.getNotes());
-            /*
-            wordName.setText(intentBundle.getString(getString(R.string.WORD_EXTRA)));
-            wordRating.setText(intentBundle.getString(getString(R.string.RATING_EXTRA)));
-            String ratingStrVal = wordRating.getText().toString();
-            float ratingFloatVal = Float.parseFloat(ratingStrVal) * 10;
-            int ratingIntVal = (int) ratingFloatVal;
-            rater.setProgress(ratingIntVal);
-            wordItemPos = intentBundle.getInt(getString(R.string.POSITION_EXTRA));
-            // Check if there are any notes
-            wordNotes.setText(intentBundle.getString(getString(R.string.NOTES_EXTRA)));
-
-             */
         }
 
         cancelBtn = findViewById(R.id.editCancelBtn);
@@ -72,12 +58,7 @@ public class EditActivity extends AppCompatActivity {
             Intent output = new Intent();
 
             output.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
-            /*
-            output.putExtra(getString(R.string.NOTES_EXTRA), wordNotes.getText().toString());
-            output.putExtra(getString(R.string.RATING_EXTRA),wordRating.getText().toString());
-            output.putExtra(getString(R.string.POSITION_EXTRA),wordItemPos);
 
-             */
             setResult(RESULT_OK, output);
             finish();
         }

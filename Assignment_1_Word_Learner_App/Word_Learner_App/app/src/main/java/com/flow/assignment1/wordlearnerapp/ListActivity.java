@@ -52,14 +52,6 @@ public class ListActivity extends AppCompatActivity {
             wordItem.setWordPosition(position);
 
             intent.putExtra(getString(R.string.WORD_LIST_ITEM),wordItem);
-            /*
-            intent.putExtra(wordKey, wordItem.getWord());
-            intent.putExtra(pronunciationKey, wordItem.getPronunciation());
-            intent.putExtra(imgResNbrKey, wordItem.getImgResNbr());
-            intent.putExtra(ratingKey, wordItem.getRating());
-            intent.putExtra(positionKey, wordItem.getWordPosition());
-            intent.putExtra(getString(R.string.NOTES_EXTRA), wordItem.getNotes());
-            */
 
             startActivityForResult(intent, EDIT_REQ);
         }
@@ -70,21 +62,8 @@ public class ListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_REQ && resultCode == RESULT_OK){
             if (data != null){
-
                 WordListItem wordListItem = (WordListItem) data.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
                 adapter.updateWordListItem(wordListItem.getWordPosition(), wordListItem);
-
-                /*
-                WordListItem wordListItem = adapter.getWordListItem(data
-                        .getIntExtra(getString(R.string.POSITION_EXTRA),0));
-
-                wordListItem.setRating(data.getStringExtra(getString(R.string.RATING_EXTRA)));
-                wordListItem.setNotes(data.getStringExtra(getString(R.string.NOTES_EXTRA)));
-
-                adapter.updateWordListItem(data.getIntExtra(
-                        getString(R.string.POSITION_EXTRA),0), wordListItem);
-
-                 */
 
                 adapter.notifyDataSetChanged();
             }

@@ -49,18 +49,6 @@ public class DetailsActivity extends AppCompatActivity {
             // Set a sample photo? Value for that?
             wordItemPos = wordListItem.getWordPosition();
             wordImage.setImageResource(wordListItem.getImgResNbr());
-            /*
-            word.setText(intentBundle.getString(getString(R.string.WORD_EXTRA)));
-            pronunciation.setText(intentBundle.getString(getString(R.string.PRONUNCIATION_EXTRA)));
-            rating.setText(intentBundle.getString(getString(R.string.RATING_EXTRA)));
-            String notesTxt = intentBundle.getString(getString(R.string.NOTES_EXTRA));
-            if (notesTxt != null){
-                notes.setText(notesTxt);
-            }
-            // Set a sample photo? Value for that?
-            wordItemPos = intentBundle.getInt(getString(R.string.POSITION_EXTRA));
-            wordImage.setImageResource(intentBundle.getInt(getString(R.string.IMGRESNBR_EXTRA)));
-             */
         }
 
         // for later
@@ -82,13 +70,7 @@ public class DetailsActivity extends AppCompatActivity {
 
             WordListItem dataToSend = (WordListItem) intentFromListActivity.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
             intentToNewActivity.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
-            /*
-            intent.putExtra(getString(R.string.WORD_EXTRA), word.getText().toString());
-            intent.putExtra(getString(R.string.RATING_EXTRA), rating.getText().toString());
-            intent.putExtra(getString(R.string.POSITION_EXTRA), wordItemPos);
-            intent.putExtra(getString(R.string.NOTES_EXTRA), notes.getText().toString());
-            // also for notes
-             */
+
             startActivityForResult(intentToNewActivity,EDIT_REQ);
         }
     };
