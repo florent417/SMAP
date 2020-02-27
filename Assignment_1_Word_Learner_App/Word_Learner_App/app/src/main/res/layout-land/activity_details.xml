@@ -19,41 +19,44 @@
         android:focusableInTouchMode="false"
         android:gravity="center"
         android:inputType="none"
-        app:layout_constraintBottom_toTopOf="@+id/description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toEndOf="@+id/detailsWord" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/detailsWordImg"
+        app:layout_constraintStart_toStartOf="@+id/detailsWordImg" />
 
     <ImageView
         android:id="@+id/detailsWordImg"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
         android:contentDescription="@string/imgDescription"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/detailsWord"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/detailsCancelBtn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/detailsWord"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars[3]" />
 
     <Button
         android:id="@+id/detailsCancelBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
         android:text="@string/cancelBtn"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/editBtn" />
 
     <Button
         android:id="@+id/editBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
         android:text="@string/editBtn"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,17 +66,15 @@
         android:id="@+id/descriptionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
         android:clickable="false"
         android:editable="false"
         android:ems="10"
         android:focusable="false"
         android:gravity="start|top"
         android:inputType="none"
-        app:layout_constraintBottom_toTopOf="@+id/detailsNotes"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/description"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <TextView
         android:id="@+id/description"
@@ -81,53 +82,55 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/description"
-        app:layout_constraintBottom_toTopOf="@+id/descriptionText"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/detailsNotes"
+        app:layout_constraintStart_toStartOf="@+id/detailsNotes"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/detailsNotes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:text="@string/detailsNotes"
-        app:layout_constraintBottom_toTopOf="@+id/detailsNotesText"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/detailsCancelBtn"
+        app:layout_constraintStart_toStartOf="@+id/detailsCancelBtn"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
 
     <EditText
         android:id="@+id/detailsNotesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="8dp"
         android:clickable="false"
         android:editable="false"
         android:ems="10"
         android:focusable="false"
         android:gravity="start|top"
         android:inputType="none"
-        app:layout_constraintBottom_toTopOf="@+id/detailsCancelBtn"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/detailsNotes"
+        app:layout_constraintTop_toBottomOf="@+id/detailsNotes" />
 
     <TextView
         android:id="@+id/detailsPronunciation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/description"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/detailsWordRating"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/detailsWord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/detailsPronunciation"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

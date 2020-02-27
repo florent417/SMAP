@@ -23,7 +23,7 @@ public class EditActivity extends AppCompatActivity {
         wordName = findViewById(R.id.editWord);
         wordRating = findViewById(R.id.editWordRating);
         rater = findViewById(R.id.wordRater);
-        wordNotes = findViewById(R.id.editNotesTxt);
+        wordNotes = findViewById(R.id.notesInput);
 
         Intent intent = getIntent();
         Bundle intentBundle = intent.getExtras();

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
     private ImageView wordImage;
-    private TextView word, pronunciation, rating;
+    private TextView word, pronunciation, rating, description, notes;
     private Button cancelBtn, editBtn;
     private int wordItemPos;
     // Should this be a resource?
@@ -29,6 +29,8 @@ public class DetailsActivity extends AppCompatActivity {
         word = findViewById(R.id.detailsWord);
         pronunciation = findViewById(R.id.detailsPronunciation);
         rating = findViewById(R.id.detailsWordRating);
+        description = findViewById(R.id.descriptionText);
+        notes = findViewById(R.id.detailsNotesText);
 
         Intent intent = getIntent();
         Bundle intentBundle = intent.getExtras();
@@ -37,7 +39,10 @@ public class DetailsActivity extends AppCompatActivity {
             word.setText(intentBundle.getString(getString(R.string.WORD_EXTRA)));
             pronunciation.setText(intentBundle.getString(getString(R.string.PRONUNCIATION_EXTRA)));
             rating.setText(intentBundle.getString(getString(R.string.RATING_EXTRA)));
-            Log.d("DETAILS RATING", rating.getText().toString());
+            String notesTxt = intentBundle.getString(getString(R.string.NOTES_EXTRA));
+            if (notesTxt != null){
+                notes.setText(notesTxt);
+            }
             // Set a sample photo? Value for that?
             wordItemPos = intentBundle.getInt(getString(R.string.POSITION_EXTRA));
             wordImage.setImageResource(intentBundle.getInt(getString(R.string.IMGRESNBR_EXTRA)));
@@ -85,7 +90,9 @@ public class DetailsActivity extends AppCompatActivity {
             if(data != null){
                 rating.setText(data.getStringExtra(getString(R.string.RATING_EXTRA)));
                 // Add notes
-
+                notes.setText(data.getStringExtra(getString(R.string.NOTES_EXTRA)));
+                Log.d("NOTESTEST", data.getStringExtra(getString(R.string.NOTES_EXTRA)));
+                Log.d("DETAILSONCREATE", notes.getText().toString());
                 setResult(RESULT_OK, data);
                 finish();
             }

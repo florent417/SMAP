@@ -2,4 +2,5 @@
 <resources>
     <dimen name="smallImgDim">80dp</dimen>
     <dimen name="wordRaterBoxSize">50dp</dimen>
+    <dimen name="landDetailsTitleConst">64</dimen>
 </resources>
