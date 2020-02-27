@@ -29,6 +29,17 @@ public class EditActivity extends AppCompatActivity {
         Bundle intentBundle = intent.getExtras();
 
         if(intentBundle != null){
+            WordListItem wordListItem = (WordListItem) intentBundle.getParcelable(getString(R.string.WORD_LIST_ITEM));
+            wordName.setText(wordListItem.getWord());
+            wordRating.setText(wordListItem.getRating());
+            String ratingStrVal = wordRating.getText().toString();
+            float ratingFloatVal = Float.parseFloat(ratingStrVal) * 10;
+            int ratingIntVal = (int) ratingFloatVal;
+            rater.setProgress(ratingIntVal);
+            wordItemPos = wordListItem.getWordPosition();
+            // Check if there are any notes
+            wordNotes.setText(wordListItem.getNotes());
+            /*
             wordName.setText(intentBundle.getString(getString(R.string.WORD_EXTRA)));
             wordRating.setText(intentBundle.getString(getString(R.string.RATING_EXTRA)));
             String ratingStrVal = wordRating.getText().toString();
@@ -37,7 +48,9 @@ public class EditActivity extends AppCompatActivity {
             rater.setProgress(ratingIntVal);
             wordItemPos = intentBundle.getInt(getString(R.string.POSITION_EXTRA));
             // Check if there are any notes
-            //wordNotes.setText();
+            wordNotes.setText(intentBundle.getString(getString(R.string.NOTES_EXTRA)));
+
+             */
         }
 
         cancelBtn = findViewById(R.id.editCancelBtn);
@@ -52,10 +65,19 @@ public class EditActivity extends AppCompatActivity {
     private View.OnClickListener okOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Intent intentFromDetailsActivity = getIntent();
+            WordListItem dataToSend = (WordListItem) intentFromDetailsActivity.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
+            dataToSend.setRating(wordRating.getText().toString());
+            dataToSend.setNotes(wordNotes.getText().toString());
             Intent output = new Intent();
+
+            output.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
+            /*
             output.putExtra(getString(R.string.NOTES_EXTRA), wordNotes.getText().toString());
             output.putExtra(getString(R.string.RATING_EXTRA),wordRating.getText().toString());
             output.putExtra(getString(R.string.POSITION_EXTRA),wordItemPos);
+
+             */
             setResult(RESULT_OK, output);
             finish();
         }

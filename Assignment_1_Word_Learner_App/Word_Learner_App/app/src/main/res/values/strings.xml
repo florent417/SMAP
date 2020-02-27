@@ -13,6 +13,7 @@
     <string name="NOTES_EXTRA">notes</string>
     <string name="IMGRESNBR_EXTRA">imgResNbr</string>
     <string name="POSITION_EXTRA">position</string>
+    <string name="WORD_LIST_ITEM">wordListItem</string>
 
     <string name="wordRatingTxt">Word Rating</string>
     <string name="imgDescription">The image given the word</string>

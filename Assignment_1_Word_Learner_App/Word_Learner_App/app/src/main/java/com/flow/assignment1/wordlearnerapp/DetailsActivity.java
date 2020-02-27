@@ -36,6 +36,20 @@ public class DetailsActivity extends AppCompatActivity {
         Bundle intentBundle = intent.getExtras();
 
         if(intentBundle != null){
+
+            WordListItem wordListItem = (WordListItem) intentBundle.getParcelable(getString(R.string.WORD_LIST_ITEM));
+
+            word.setText(wordListItem.getWord());
+            pronunciation.setText(wordListItem.getPronunciation());
+            rating.setText(wordListItem.getRating());
+            String notesTxt = wordListItem.getNotes();
+            if (notesTxt != null){
+                notes.setText(notesTxt);
+            }
+            // Set a sample photo? Value for that?
+            wordItemPos = wordListItem.getWordPosition();
+            wordImage.setImageResource(wordListItem.getImgResNbr());
+            /*
             word.setText(intentBundle.getString(getString(R.string.WORD_EXTRA)));
             pronunciation.setText(intentBundle.getString(getString(R.string.PRONUNCIATION_EXTRA)));
             rating.setText(intentBundle.getString(getString(R.string.RATING_EXTRA)));
@@ -46,6 +60,7 @@ public class DetailsActivity extends AppCompatActivity {
             // Set a sample photo? Value for that?
             wordItemPos = intentBundle.getInt(getString(R.string.POSITION_EXTRA));
             wordImage.setImageResource(intentBundle.getInt(getString(R.string.IMGRESNBR_EXTRA)));
+             */
         }
 
         // for later
@@ -62,14 +77,19 @@ public class DetailsActivity extends AppCompatActivity {
     private View.OnClickListener editOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View wordItemView) {
-            Intent intent = new Intent(DetailsActivity.this, EditActivity.class);
+            Intent intentToNewActivity = new Intent(DetailsActivity.this, EditActivity.class);
+            Intent intentFromListActivity = getIntent();
 
+            WordListItem dataToSend = (WordListItem) intentFromListActivity.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
+            intentToNewActivity.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
+            /*
             intent.putExtra(getString(R.string.WORD_EXTRA), word.getText().toString());
             intent.putExtra(getString(R.string.RATING_EXTRA), rating.getText().toString());
             intent.putExtra(getString(R.string.POSITION_EXTRA), wordItemPos);
+            intent.putExtra(getString(R.string.NOTES_EXTRA), notes.getText().toString());
             // also for notes
-
-            startActivityForResult(intent,EDIT_REQ);
+             */
+            startActivityForResult(intentToNewActivity,EDIT_REQ);
         }
     };
 
@@ -86,13 +106,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == EDIT_REQ && resultCode == RESULT_OK ){
-            // Maybe this is not needed since it gets the rating from list activity
             if(data != null){
-                rating.setText(data.getStringExtra(getString(R.string.RATING_EXTRA)));
-                // Add notes
-                notes.setText(data.getStringExtra(getString(R.string.NOTES_EXTRA)));
-                Log.d("NOTESTEST", data.getStringExtra(getString(R.string.NOTES_EXTRA)));
-                Log.d("DETAILSONCREATE", notes.getText().toString());
                 setResult(RESULT_OK, data);
                 finish();
             }

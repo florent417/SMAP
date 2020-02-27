@@ -19,8 +19,6 @@ public class ListActivity extends AppCompatActivity {
     private WordListAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private Button exitBtn;
-
-    private String wordKey, pronunciationKey, imgResNbrKey, ratingKey, positionKey;
     // Should this be a resource?
     private final int EDIT_REQ = 1;
 
@@ -41,33 +39,54 @@ public class ListActivity extends AppCompatActivity {
         adapter.setOnItemListClickListener(onItemListClickListener);
         recyclerView.setAdapter(adapter);
 
-        // Resources implementation influenced from here
-        // https://stackoverflow.com/questions/41007837/how-to-use-getresources-on-a-adapter-java
-        wordKey = getString(R.string.WORD_EXTRA);
-        pronunciationKey = getString(R.string.PRONUNCIATION_EXTRA);
-        imgResNbrKey = getString(R.string.IMGRESNBR_EXTRA);
-        ratingKey = getString(R.string.RATING_EXTRA);
-        positionKey = getString(R.string.POSITION_EXTRA);
-
         exitBtn = findViewById(R.id.exitBtn);
         exitBtn.setOnClickListener(exitBtnListener);
     }
+
+    private WordListAdapter.OnItemListClickListener onItemListClickListener = new WordListAdapter.OnItemListClickListener() {
+        @Override
+        public void onItemListClick(int position) {
+            Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
+
+            WordListItem wordItem = adapter.getWordListItem(position);
+            wordItem.setWordPosition(position);
+
+            intent.putExtra(getString(R.string.WORD_LIST_ITEM),wordItem);
+            /*
+            intent.putExtra(wordKey, wordItem.getWord());
+            intent.putExtra(pronunciationKey, wordItem.getPronunciation());
+            intent.putExtra(imgResNbrKey, wordItem.getImgResNbr());
+            intent.putExtra(ratingKey, wordItem.getRating());
+            intent.putExtra(positionKey, wordItem.getWordPosition());
+            intent.putExtra(getString(R.string.NOTES_EXTRA), wordItem.getNotes());
+            */
+
+            startActivityForResult(intent, EDIT_REQ);
+        }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_REQ && resultCode == RESULT_OK){
             if (data != null){
-                WordListAdapter.ViewHolder wordItem = (WordListAdapter.ViewHolder) recyclerView
-                        .findViewHolderForAdapterPosition(data.getIntExtra
-                                (getString(R.string.POSITION_EXTRA),0));
 
-                if (wordItem != null){
-                    wordItem.wordRating.setText(data.getStringExtra(getString(R.string.RATING_EXTRA)));
-                }
-                WordListItem wordListItem = adapter.getWordListItem(data.getIntExtra(getString(R.string.POSITION_EXTRA),0));
+                WordListItem wordListItem = (WordListItem) data.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
+                adapter.updateWordListItem(wordListItem.getWordPosition(), wordListItem);
+
+                /*
+                WordListItem wordListItem = adapter.getWordListItem(data
+                        .getIntExtra(getString(R.string.POSITION_EXTRA),0));
+
                 wordListItem.setRating(data.getStringExtra(getString(R.string.RATING_EXTRA)));
-                adapter.wordListItems.set(data.getIntExtra(getString(R.string.POSITION_EXTRA),0), wordListItem);
+                wordListItem.setNotes(data.getStringExtra(getString(R.string.NOTES_EXTRA)));
+
+                adapter.updateWordListItem(data.getIntExtra(
+                        getString(R.string.POSITION_EXTRA),0), wordListItem);
+
+                 */
+
+                adapter.notifyDataSetChanged();
             }
         }
     }
@@ -82,37 +101,23 @@ public class ListActivity extends AppCompatActivity {
         }
     };
 
-    private WordListAdapter.OnItemListClickListener onItemListClickListener = new WordListAdapter.OnItemListClickListener() {
-        @Override
-        public void onItemListClick(int position) {
-            // Dont't know if this is clever or it should be updated to do update on the arraylist
-            // or if it should be added from the viewholder
-            Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
-            //adapter.
-            WordListItem test = adapter.getWordListItem(position);
-            intent.putExtra(wordKey, test.getWord());
-            intent.putExtra(pronunciationKey, test.getPronunciation());
-            intent.putExtra(imgResNbrKey, test.getImgResNbr());
-            intent.putExtra(ratingKey, test.getRating());
-            intent.putExtra(positionKey, position);
-
-            startActivityForResult(intent, EDIT_REQ);
-        }
-    };
-
     public ArrayList<WordListItem> InitWordList(){
         ArrayList<WordListItem> wordListItems = new ArrayList<WordListItem>();
-        wordListItems.add(new WordListItem("buffalo","something", "8.0",R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", "2.3",R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", "1",R.drawable.cheetah));wordListItems.add(new WordListItem("buffalo","something", "2",R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", "2.3",R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", "1",R.drawable.cheetah));wordListItems.add(new WordListItem("buffalo","something", "2",R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", "2.3",R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", "1",R.drawable.cheetah));wordListItems.add(new WordListItem("buffalo","something", "2",R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", "2.3",R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", "1",R.drawable.cheetah));wordListItems.add(new WordListItem("buffalo","something", "2",R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", "2.3",R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", "1",R.drawable.cheetah));
+        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
+        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
+        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
+        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
+        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
+        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
+        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
+        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
+        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
+        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
+        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
+        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
+        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
+        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
+        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
         return wordListItems;
-    };
+    }
 }

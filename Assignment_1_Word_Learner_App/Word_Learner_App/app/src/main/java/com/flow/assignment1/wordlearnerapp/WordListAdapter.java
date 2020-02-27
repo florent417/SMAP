@@ -9,12 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
-/*
-* The idea on how to implement adapter with recycler view is influenced by this playlist on YT
-* https://www.youtube.com/watch?v=5T144CbTwjc&list=PLk7v1Z2rk4hjHrGKo9GqOtLs1e2bglHHA&index=2&fbclid=IwAR16HBg3NMwz2uDT9gbiUgP6QquDEVK5S1UEx3nz49kTvtU_Wisl9XpowUc*/
-
+// The idea on how to implement adapter with recycler view is influenced by this playlist on YT
+// https://www.youtube.com/watch?v=5T144CbTwjc&list=PLk7v1Z2rk4hjHrGKo9GqOtLs1e2bglHHA&index=2&fbclid=IwAR16HBg3NMwz2uDT9gbiUgP6QquDEVK5S1UEx3nz49kTvtU_Wisl9XpowUc*/
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHolder> {
-    public ArrayList<WordListItem> wordListItems;
+    private ArrayList<WordListItem> wordListItems;
     private Context context;
     private OnItemListClickListener mOnItemListClick;
 
@@ -35,6 +33,9 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
 
     public WordListItem getWordListItem(int position){
         return wordListItems.get(position);
+    }
+    public void updateWordListItem(int position ,WordListItem wordItem){
+        wordListItems.set(position,wordItem);
     }
 
     @NonNull
@@ -62,8 +63,8 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView word, pronunciation, wordRating;
-        public ImageView imgView;
+        private TextView word, pronunciation, wordRating;
+        private ImageView imgView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
