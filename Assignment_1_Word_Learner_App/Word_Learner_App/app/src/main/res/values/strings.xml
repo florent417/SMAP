@@ -7,12 +7,6 @@
     <string name="description">Description</string>
     <string name="detailsNotes">Notes</string>
 
-    <string name="WORD_EXTRA">word</string>
-    <string name="PRONUNCIATION_EXTRA">pronunciation</string>
-    <string name="RATING_EXTRA">rating</string>
-    <string name="NOTES_EXTRA">notes</string>
-    <string name="IMGRESNBR_EXTRA">imgResNbr</string>
-    <string name="POSITION_EXTRA">position</string>
     <string name="WORD_LIST_ITEM">wordListItem</string>
 
     <string name="wordRatingTxt">Word Rating</string>

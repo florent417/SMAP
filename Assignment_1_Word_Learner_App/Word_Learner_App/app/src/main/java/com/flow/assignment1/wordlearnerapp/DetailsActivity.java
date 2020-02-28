@@ -49,6 +49,8 @@ public class DetailsActivity extends AppCompatActivity {
             // Set a sample photo? Value for that?
             wordItemPos = wordListItem.getWordPosition();
             wordImage.setImageResource(wordListItem.getImgResNbr());
+
+            description.setText(wordListItem.getDescription());
         }
 
         // for later

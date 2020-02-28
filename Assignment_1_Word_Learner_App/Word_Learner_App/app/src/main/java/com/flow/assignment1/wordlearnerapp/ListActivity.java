@@ -73,16 +73,18 @@ public class ListActivity extends AppCompatActivity {
     private View.OnClickListener exitBtnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // One of these maybe, but so far not one exits the app completely
-            //finish();
-            finishAffinity();
-            //System.exit(1);
+            finishAffinity(); // Finish activities
+            System.exit(0); // Terminates the process/app
+            //Runtime.getRuntime().exit(0); // the same as System, but better description of method
         }
     };
 
     public ArrayList<WordListItem> InitWordList(){
+        String descrTest = "a large, long-necked ungulate mammal of arid country, with long slender legs, broad cushioned feet, and either one or two humps on the back. Camels can survive for long periods without food or drink, chiefly by using up the fat reserves in their humps.";
         ArrayList<WordListItem> wordListItems = new ArrayList<WordListItem>();
-        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
+        WordListItem buffalo = new WordListItem("buffalo","something", R.drawable.buffalo);
+        buffalo.setDescription(descrTest);
+        wordListItems.add(buffalo);
         wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
         wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
         wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
@@ -97,6 +99,10 @@ public class ListActivity extends AppCompatActivity {
         wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
         wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
         wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
+
+        for (WordListItem item: wordListItems) {
+            item.setDescription(descrTest);
+        }
         return wordListItems;
     }
 }

@@ -11,6 +11,7 @@ import java.util.Random;
 public class WordListItem implements Parcelable {
     private String word;
     private String pronunciation;
+    private String description;
     private String rating;
     private String notes;
     private int imgResNbr;
@@ -31,6 +32,7 @@ public class WordListItem implements Parcelable {
         double formattedRating = Math.round(randomRating * 10.0) / 10.0;
         rating = Double.toString(formattedRating);
         notes = "";
+        // Add descripton
     }
 
     //region Getters and setters
@@ -50,6 +52,12 @@ public class WordListItem implements Parcelable {
     }
     public void setWordPosition(int wordPosition){this.wordPosition = wordPosition;}
     public int getWordPosition(){return wordPosition;}
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
     //endregion
 
     // Not needed to implement
@@ -62,6 +70,7 @@ public class WordListItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(word);
         dest.writeString(pronunciation);
+        dest.writeString(description);
         dest.writeString(rating);
         dest.writeString(notes);
         dest.writeInt(imgResNbr);
@@ -82,6 +91,7 @@ public class WordListItem implements Parcelable {
     public WordListItem(Parcel pc){
         word = pc.readString();
         pronunciation = pc.readString();
+        description = pc.readString();
         rating = pc.readString();
         notes = pc.readString();
         imgResNbr = pc.readInt();
