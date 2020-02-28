@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -24,18 +25,17 @@ public class EditActivity extends AppCompatActivity {
         rater = findViewById(R.id.wordRater);
         wordNotes = findViewById(R.id.notesInput);
 
+        String notes = wordNotes.getText().toString();
         Intent intent = getIntent();
-        Bundle intentBundle = intent.getExtras();
 
-        if(intentBundle != null){
-            WordListItem wordListItem = (WordListItem) intentBundle.getParcelable(getString(R.string.WORD_LIST_ITEM));
+        if(intent != null){
+            WordListItem wordListItem = (WordListItem) intent.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
             wordName.setText(wordListItem.getWord());
             wordRating.setText(wordListItem.getRating());
             String ratingStrVal = wordRating.getText().toString();
             float ratingFloatVal = Float.parseFloat(ratingStrVal) * 10;
             int ratingIntVal = (int) ratingFloatVal;
             rater.setProgress(ratingIntVal);
-            // Check if there are any notes
             wordNotes.setText(wordListItem.getNotes());
         }
 
@@ -55,8 +55,8 @@ public class EditActivity extends AppCompatActivity {
             WordListItem dataToSend = (WordListItem) intentFromDetailsActivity.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
             dataToSend.setRating(wordRating.getText().toString());
             dataToSend.setNotes(wordNotes.getText().toString());
-            Intent output = new Intent();
 
+            Intent output = new Intent();
             output.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
 
             setResult(RESULT_OK, output);

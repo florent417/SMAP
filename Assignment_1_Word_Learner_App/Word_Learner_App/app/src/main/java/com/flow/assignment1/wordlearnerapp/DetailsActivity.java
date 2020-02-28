@@ -12,6 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+// Since the system by default uses the Bundle instance to save information about the view
+// in the activity, onSaveInstanceState is not implemented for this activity, neither the
+// editactivity, since all the information can be found in the views of the activity.
+// Inspiration:
+// https://stackoverflow.com/questions/45314262/android-view-what-is-automatically-saved-and-restored-in-an-activity
 public class DetailsActivity extends AppCompatActivity {
     private ImageView wordImage;
     private TextView word, pronunciation, rating, description, notes;
@@ -49,7 +54,6 @@ public class DetailsActivity extends AppCompatActivity {
             // Set a sample photo? Value for that?
             wordItemPos = wordListItem.getWordPosition();
             wordImage.setImageResource(wordListItem.getImgResNbr());
-
             description.setText(wordListItem.getDescription());
         }
 
@@ -88,7 +92,8 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        // The data does not need to be set in the activity, since the updated object is going to
+        // be sent anyway from the listactivity
         if(requestCode == EDIT_REQ && resultCode == RESULT_OK ){
             if(data != null){
                 setResult(RESULT_OK, data);

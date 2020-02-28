@@ -37,6 +37,9 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     public void updateWordListItem(int position ,WordListItem wordItem){
         wordListItems.set(position,wordItem);
     }
+    public ArrayList<WordListItem> getWordListItems() {
+        return wordListItems;
+    }
 
     @NonNull
     @Override

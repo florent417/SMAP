@@ -73,7 +73,7 @@
         android:gravity="start|top"
         android:inputType="textMultiLine"
         android:maxLines="@integer/maxLines"
-        android:textSize="@dimen/editRatingTxtSize"
+        android:textSize="@dimen/smallTxtSize"
         app:layout_constraintEnd_toEndOf="@+id/editWordRating"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editNotesTxt" />

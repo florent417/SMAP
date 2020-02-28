@@ -27,7 +27,13 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        ArrayList<WordListItem> wordListItems = InitWordList();
+        ArrayList<WordListItem> wordListItems;
+
+        if (savedInstanceState == null)
+            wordListItems = InitWordList();
+        else
+            wordListItems = savedInstanceState
+                    .getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
 
         // The implementation for adding a layout manager and adapter to recycler view,
         // is influenced byt this site
@@ -41,6 +47,12 @@ public class ListActivity extends AppCompatActivity {
 
         exitBtn = findViewById(R.id.exitBtn);
         exitBtn.setOnClickListener(exitBtnListener);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(getString(R.string.WORD_LIST_ARRAY),adapter.getWordListItems());
     }
 
     private WordListAdapter.OnItemListClickListener onItemListClickListener = new WordListAdapter.OnItemListClickListener() {
