@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- For test purposes, some words have been inserted. First activity should display-->
+    <!-- For test purposes, some words have been inserted. First activity should display just fine-->
     <string name="app_name">Aprendiz de Palabras</string>
     <string name="exitBtn">Salida</string>
     <string name="okBtn"></string>
