@@ -16,4 +16,5 @@
     <dimen name="detailsSmallTxtSize">14sp</dimen>
     <dimen name="smallTxtSize">14sp</dimen>
     <dimen name="detailsTxtSize">24sp</dimen>
+    <dimen name="cardViewMargin">4dp</dimen>
 </resources>

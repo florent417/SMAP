@@ -125,20 +125,18 @@
         android:id="@+id/detailsPronunciation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/detailsWordRating"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/detailsWordImg"
+        app:layout_constraintStart_toStartOf="@+id/detailsWordImg" />
 
     <TextView
         android:id="@+id/detailsWord"
-        android:layout_width="0dp"
-        android:layout_height="19dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/detailsPronunciation"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/detailsWordImg"
+        app:layout_constraintStart_toStartOf="@+id/detailsWordImg" />
 </androidx.constraintlayout.widget.ConstraintLayout>
