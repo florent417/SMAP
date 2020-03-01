@@ -7,12 +7,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -21,16 +24,18 @@ public class ListActivity extends AppCompatActivity {
     private Button exitBtn;
     // Should this be a resource?
     private final int EDIT_REQ = 1;
+    ArrayList<WordListItem> wordListItems = new ArrayList<WordListItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        ArrayList<WordListItem> wordListItems;
+
 
         if (savedInstanceState == null)
-            wordListItems = InitWordList();
+            //wordListItems = InitWordList();
+            addDataFromFile();
         else
             wordListItems = savedInstanceState
                     .getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
@@ -91,30 +96,43 @@ public class ListActivity extends AppCompatActivity {
         }
     };
 
-    public ArrayList<WordListItem> InitWordList(){
-        String descrTest = "a large, long-necked ungulate mammal of arid country, with long slender legs, broad cushioned feet, and either one or two humps on the back. Camels can survive for long periods without food or drink, chiefly by using up the fat reserves in their humps.";
-        ArrayList<WordListItem> wordListItems = new ArrayList<WordListItem>();
-        WordListItem buffalo = new WordListItem("buffalo","something", R.drawable.buffalo);
-        buffalo.setDescription(descrTest);
-        wordListItems.add(buffalo);
-        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
-        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
-        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
-        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
-        wordListItems.add(new WordListItem("buffalo","something", R.drawable.buffalo));
-        wordListItems.add(new WordListItem("camel","something else", R.drawable.camel));
-        wordListItems.add(new WordListItem("cheetah","something 3", R.drawable.cheetah));
+    // Inspiration :
+    // https://stackoverflow.com/questions/52899516/android-how-to-search-image-name-string-in-drawable-directory-and-show-it-in
+    private int setImgResFromWord (String word){
+        int resId = getResources().getIdentifier(word, "drawable", getPackageName());
+        return resId;
+    }
 
-        for (WordListItem item: wordListItems) {
-            item.setDescription(descrTest);
+    // Filereader
+    private void addDataFromFile(){
+        BufferedReader br;
+        InputStream inputStream = getResources().openRawResource(R.raw.animal_list);
+        br = new BufferedReader(
+                new InputStreamReader(inputStream, Charset.forName("UTF-8"))
+        );
+        String currentLine;
+        try {
+            while ((currentLine = br.readLine()) != null) {
+                String[] tokens = currentLine.split(";");
+                String word = tokens[0],pronunciation = tokens[1], description = tokens[2];
+
+                WordListItem wordItem = new WordListItem(word, pronunciation, description);
+                wordItem.setImgResNbr(setImgResFromWord(wordItem.getWord().toLowerCase()));
+                wordListItems.add(wordItem);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null)br.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
-        return wordListItems;
     }
 }
+
+// Changed the file animal_list.csv according to the info on this post
+// https://stackoverflow.com/questions/8432584/how-to-make-notepad-to-save-text-in-utf-8-without-bom
+// and it worked, since it didn't read the lion correctly.
+// Also kudo picture and word were not the same string so changed it to kudo, to match the drawable
