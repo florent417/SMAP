@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="maxRating">100</integer>
+    <integer name="minTxtLines">3</integer>
+    <integer name="maxLines">3</integer>
+</resources>

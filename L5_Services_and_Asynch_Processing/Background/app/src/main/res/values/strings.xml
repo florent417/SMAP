@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Background Services</string>
+    <string name="stopServTxt">Stop Service</string>
+    <string name="startServTxt">Start Service</string>
+    <string name="unBindBtnTxt">Unbind Service</string>
+    <string name="bindServBtnTxt">Bind Service</string>
+    <string name="getStateBtnTxt">Get State</string>
+</resources>
