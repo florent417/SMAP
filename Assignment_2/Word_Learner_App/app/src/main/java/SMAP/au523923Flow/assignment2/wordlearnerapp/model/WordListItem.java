@@ -27,6 +27,17 @@ public class WordListItem implements Parcelable {
         rating = getRandomRating();
     }
 
+    private String getRandomRating(){
+        // Random ratings inspired by
+        // https://stackoverflow.com/questions/40431966/what-is-the-best-way-to-generate-a-random-float-value-included-into-a-specified
+        Random random = new Random();
+        float randomRating = MIN_RATING + random.nextFloat() * (MAX_RATING - MIN_RATING);
+        // Formatting inspired from :
+        // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
+        double formattedRating = Math.round(randomRating * 10.0) / 10.0;
+        return Double.toString(formattedRating);
+    }
+
     //region Getters and setters
     public String getWord(){ return word; }
     public String getPronunciation(){ return "[" + pronunciation + "]"; }
@@ -51,7 +62,7 @@ public class WordListItem implements Parcelable {
         this.description = description;
     }
     //endregion
-
+    //region Parcel and Parcelable implementation
     // Not needed to implement
     @Override
     public int describeContents() {
@@ -89,15 +100,5 @@ public class WordListItem implements Parcelable {
         imgResNbr = pc.readInt();
         wordPosition = pc.readInt();
     }
-
-    private String getRandomRating(){
-        // Random ratings inspired by
-        // https://stackoverflow.com/questions/40431966/what-is-the-best-way-to-generate-a-random-float-value-included-into-a-specified
-        Random random = new Random();
-        float randomRating = MIN_RATING + random.nextFloat() * (MAX_RATING - MIN_RATING);
-        // Formatting inspired from :
-        // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
-        double formattedRating = Math.round(randomRating * 10.0) / 10.0;
-        return Double.toString(formattedRating);
-    }
+    //endregion
 }

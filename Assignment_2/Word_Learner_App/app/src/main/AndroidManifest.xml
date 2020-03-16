@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/word_learner_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.EditActivity"></activity>
+        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.EditActivity"/>
         <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.DetailsActivity" />
         <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.ListActivity">
             <intent-filter>
@@ -20,6 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".service.WordLearnerService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
