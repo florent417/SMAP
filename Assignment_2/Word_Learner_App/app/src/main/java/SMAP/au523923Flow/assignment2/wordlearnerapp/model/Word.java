@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -39,7 +40,11 @@ public class Word implements Parcelable {
     @Expose
     private String pronunciation;
 
+    // How? @ColumnInfo
+    // Does this work? @Embedded
     private Definition firstDefinition;
+    private String rating;
+    private String notes;
 
     //region Getters and setters
     @TypeConverters(DefinitionConverter.class)
@@ -73,6 +78,14 @@ public class Word implements Parcelable {
 
     public void setFirstDefinition(){firstDefinition = definitions.get(0);}
 
+    public String getRating() {return rating;}
+
+    public void setRating(String rating) {this.rating = rating;}
+
+    public String getNotes (){return notes;}
+
+    public void setNotes(String notes) {this.notes = notes;}
+
     //endregion
 
     //region Parcel and Parcelable implementation
@@ -84,16 +97,20 @@ public class Word implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        // Have no idea if this works
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             dest.writeParcelableList(definitions,flags);
         }
+        else {
+            dest.writeList(definitions);
+        }
         dest.writeString(word);
         dest.writeString(pronunciation);
-        dest.write(firstDefinition);
+        dest.writeParcelable(firstDefinition, flags);
         dest.writeString(rating);
         dest.writeString(notes);
-        dest.writeInt(imgResNbr);
-        dest.writeInt(wordPosition);
+        //dest.writeInt(imgResNbr);
+        //dest.writeInt(wordPosition);
     }
 
     /** Static field used to regenerate object, individually or as arrays */
@@ -108,13 +125,19 @@ public class Word implements Parcelable {
 
     /**Ctor from Parcel, reads back fields IN THE ORDER they were written */
     public Word(Parcel pc){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            pc.readParcelableList(definitions, Definition.class.getClassLoader());
+        }
+        else {
+            pc.readList(definitions, Definition.class.getClassLoader());
+        }
         word = pc.readString();
         pronunciation = pc.readString();
-        description = pc.readString();
+        firstDefinition = pc.readParcelable(Definition.class.getClassLoader());
         rating = pc.readString();
         notes = pc.readString();
-        imgResNbr = pc.readInt();
-        wordPosition = pc.readInt();
+        //imgResNbr = pc.readInt();
+        //wordPosition = pc.readInt();
     }
     //endregion
 }
