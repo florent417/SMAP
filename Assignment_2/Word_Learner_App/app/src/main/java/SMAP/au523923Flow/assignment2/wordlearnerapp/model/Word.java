@@ -14,6 +14,8 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import java.util.List;
+import java.util.Random;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -22,6 +24,12 @@ import com.google.gson.annotations.SerializedName;
 public class Word implements Parcelable {
     //@PrimaryKey(autoGenerate = true)
     //public int wordId;
+    private float MIN_RATING = 0.00f, MAX_RATING = 10.00f;
+
+    public Word (){
+        rating = getRandomRating();
+        notes = "";
+    }
 
     //@Ignore
     @SerializedName("definitions")
@@ -40,10 +48,13 @@ public class Word implements Parcelable {
     @Expose
     private String pronunciation;
 
-    // How? @ColumnInfo
-    // Does this work? @Embedded
+    @ColumnInfo(name = "definition")
+    // Does this work?
+    @Embedded
     private Definition firstDefinition;
+    @ColumnInfo(name = "rating")
     private String rating;
+    @ColumnInfo(name = "notes")
     private String notes;
 
     //region Getters and setters
@@ -52,11 +63,15 @@ public class Word implements Parcelable {
         return definitions;
     }
 
-    // add a method to return the first definition
-
     public void setDefinitions(List<Definition> definitions) {
         this.definitions = definitions;
     }
+
+    //@TypeConverters(DefinitionConverter.class)
+    public Definition getFirstDefinition() {return firstDefinition;}
+    //public Definition getFirstDefinition() {return definitions.get(0);}
+
+    public void setFirstDefinition(){firstDefinition = definitions.get(0);}
 
     public String getWord() {
         return word;
@@ -67,16 +82,12 @@ public class Word implements Parcelable {
     }
 
     public String getPronunciation() {
-        return pronunciation;
+        return "[" + pronunciation + "]";
     }
 
     public void setPronunciation(String pronunciation) {
         this.pronunciation = pronunciation;
     }
-
-    public Definition getFirstDefinition() {return firstDefinition;}
-
-    public void setFirstDefinition(){firstDefinition = definitions.get(0);}
 
     public String getRating() {return rating;}
 
@@ -140,4 +151,15 @@ public class Word implements Parcelable {
         //wordPosition = pc.readInt();
     }
     //endregion
+
+    private String getRandomRating(){
+        // Random ratings inspired by
+        // https://stackoverflow.com/questions/40431966/what-is-the-best-way-to-generate-a-random-float-value-included-into-a-specified
+        Random random = new Random();
+        float randomRating = MIN_RATING + random.nextFloat() * (MAX_RATING - MIN_RATING);
+        // Formatting inspired from :
+        // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
+        double formattedRating = Math.round(randomRating * 10.0) / 10.0;
+        return Double.toString(formattedRating);
+    }
 }

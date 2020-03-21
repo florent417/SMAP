@@ -20,6 +20,7 @@ public class Definition implements Parcelable {
     //@PrimaryKey(autoGenerate = true)
     //public int definitionId;
 
+    //region variables and database annotations
     @ColumnInfo(name = "type")
     @SerializedName("type")
     @Expose
@@ -44,6 +45,7 @@ public class Definition implements Parcelable {
     @SerializedName("emoji")
     @Expose
     private String emoji;
+    //endregion
 
     //region Getters and setters
     public String getType() {
