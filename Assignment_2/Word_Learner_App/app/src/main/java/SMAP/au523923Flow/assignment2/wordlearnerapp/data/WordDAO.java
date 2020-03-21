@@ -13,7 +13,7 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 @Dao
 public interface WordDAO {
     @Query("SELECT * FROM word")
-    List<Word> getWords();
+    List<Word> getAllWords();
 
     @Query("SELECT * FROM word WHERE word LIKE :word LIMIT 1")
     Word getWord(String word);

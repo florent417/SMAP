@@ -15,19 +15,17 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Definition;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService.LocalBinder;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DataHelper;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.WordJsonParser;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 
 import java.util.ArrayList;
 
@@ -41,7 +39,8 @@ public class ListActivity extends AppCompatActivity {
     private WordListAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private Button exitBtn;
-    private Button testBtn;
+    private Button testAddBtn;
+    private Button testDelBtn;
     // Should this be a resource?
     private final int EDIT_REQ = 1;
 
@@ -56,8 +55,20 @@ public class ListActivity extends AppCompatActivity {
 
         exitBtn = findViewById(R.id.exitBtn);
         exitBtn.setOnClickListener(exitBtnListener);
-        testBtn = findViewById(R.id.testBtn);
-        testBtn.setOnClickListener(testBtnListener);
+        testAddBtn = findViewById(R.id.testAddBtn);
+        testDelBtn = findViewById(R.id.testDelBtn);
+        testAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wordLearnerService.addWord("vial");
+            }
+        });
+        testDelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wordLearnerService.deleteWord("vial");
+            }
+        });
     }
 
     @Override
@@ -67,7 +78,7 @@ public class ListActivity extends AppCompatActivity {
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(WordLearnerService.BROADCAST_WORDLEARNERSERVICE);
+        filter.addAction(Globals.BROADCAST_WORDLEARNERSERVICE);
 
         //can use registerReceiver(...)
         //but using local broadcasts for this service:
@@ -162,12 +173,6 @@ public class ListActivity extends AppCompatActivity {
             //Runtime.getRuntime().exit(0); // the same as System, but better description of method
         }
     };
-    private View.OnClickListener testBtnListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            wordLearnerService.testAddWord("lion");
-        }
-    };
 
     @Override
     protected void onStop() {
@@ -197,7 +202,7 @@ public class ListActivity extends AppCompatActivity {
                 protected void onPostExecute(Word word) {
                     Toast.makeText(ListActivity.this, word.getWord(), Toast.LENGTH_LONG).show();
                 }
-            }.execute("lion");
+            }.execute("vial");
         }
     };
 

@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.au523923Flow.assignment2.wordlearnerapp.SMAP.au523923Flow.assignment2.wordlearnerapp.ListActivity">
+    tools:context="SMAP.au523923Flow.assignment2.wordlearnerapp.ListActivity">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
-        android:id="@+id/testBtn"
+        android:id="@+id/testAddBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -57,10 +57,24 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="16dp"
-        android:text="TestRsps"
+        android:text="Add vial"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/exitBtn" />
+
+    <Button
+        android:id="@+id/testDelBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Delete Vial"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/exitBtn"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
