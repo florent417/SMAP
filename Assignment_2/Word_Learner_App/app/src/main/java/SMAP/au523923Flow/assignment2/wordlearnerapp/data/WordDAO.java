@@ -26,4 +26,7 @@ public interface WordDAO {
 
     @Insert
     void addWord(Word... word);
+
+    @Insert
+    void addWords(List<Word> words);
 }

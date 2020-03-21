@@ -22,8 +22,10 @@ import com.google.gson.annotations.SerializedName;
 // Extracted with: http://www.jsonschema2pojo.org/
 @Entity (tableName = "word")
 public class Word implements Parcelable {
+
     //@PrimaryKey(autoGenerate = true)
     //public int wordId;
+    @Ignore
     private float MIN_RATING = 0.00f, MAX_RATING = 10.00f;
 
     public Word (){
@@ -48,14 +50,17 @@ public class Word implements Parcelable {
     @Expose
     private String pronunciation;
 
-    @ColumnInfo(name = "definition")
+    //@ColumnInfo(name = "definition")
     // Does this work?
-    @Embedded
-    private Definition firstDefinition;
+    //@Embedded
+    //private Definition firstDefinition;
     @ColumnInfo(name = "rating")
     private String rating;
     @ColumnInfo(name = "notes")
     private String notes;
+
+    @Ignore
+    private Definition definition;
 
     //region Getters and setters
     @TypeConverters(DefinitionConverter.class)
@@ -68,10 +73,21 @@ public class Word implements Parcelable {
     }
 
     //@TypeConverters(DefinitionConverter.class)
-    public Definition getFirstDefinition() {return firstDefinition;}
-    //public Definition getFirstDefinition() {return definitions.get(0);}
+    //public Definition getFirstDefinition() {return firstDefinition;}
+    public Definition getFirstDefinition() {return definitions.get(0);}
 
-    public void setFirstDefinition(){firstDefinition = definitions.get(0);}
+    public Definition getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition() {
+        if (!definitions.isEmpty() && definitions != null)
+            definition = definitions.get(0);
+    }
+
+    //public void setFirstDefinition(){firstDefinition = definitions.get(0);}
+
+    //public void setFirstDefinition(Definition firstDefinition) { this.firstDefinition = firstDefinition; }
 
     public String getWord() {
         return word;
@@ -117,7 +133,7 @@ public class Word implements Parcelable {
         }
         dest.writeString(word);
         dest.writeString(pronunciation);
-        dest.writeParcelable(firstDefinition, flags);
+        //dest.writeParcelable(firstDefinition, flags);
         dest.writeString(rating);
         dest.writeString(notes);
         //dest.writeInt(imgResNbr);
@@ -144,7 +160,7 @@ public class Word implements Parcelable {
         }
         word = pc.readString();
         pronunciation = pc.readString();
-        firstDefinition = pc.readParcelable(Definition.class.getClassLoader());
+        //firstDefinition = pc.readParcelable(Definition.class.getClassLoader());
         rating = pc.readString();
         notes = pc.readString();
         //imgResNbr = pc.readInt();

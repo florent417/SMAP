@@ -51,6 +51,12 @@ public class WordRepository {
         addWordAsyncTask.execute(word);
     }
 
+    public void addWords(List<Word> words){
+        AddWordsAsyncTask addWordsAsyncTask = new AddWordsAsyncTask(wordDAO);
+
+        addWordsAsyncTask.execute(words);
+    }
+
     public void deleteWord(Word word){
         DeleteWordAsyncTask deleteWordAsyncTask = new DeleteWordAsyncTask(wordDAO);
 
@@ -146,6 +152,24 @@ public class WordRepository {
         protected Void doInBackground(Word... words) {
             try {
                 wordDAO.updateWord(words[0]);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class AddWordsAsyncTask extends AsyncTask<List<Word>, Void, Void> {
+        private WordDAO wordDAO;
+
+        private AddWordsAsyncTask(WordDAO wordDAO){
+            this.wordDAO = wordDAO;
+        }
+
+        @Override
+        protected Void doInBackground(List<Word>... words) {
+            try {
+                wordDAO.addWords(words[0]);
             } catch (Exception e){
                 e.printStackTrace();
             }

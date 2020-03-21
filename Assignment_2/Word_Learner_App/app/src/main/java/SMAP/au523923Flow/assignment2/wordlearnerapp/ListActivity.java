@@ -187,6 +187,7 @@ public class ListActivity extends AppCompatActivity {
     private BroadcastReceiver onBackgroundServiceResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            /*
             //Word test = wordLearnerService.testGetWord("lion");
             // Inspired by and some stuff copied from servicesdemo code from L5 in SMAP
             new AsyncTask<String, Void, Word>() {
@@ -203,6 +204,8 @@ public class ListActivity extends AppCompatActivity {
                     Toast.makeText(ListActivity.this, word.getWord(), Toast.LENGTH_LONG).show();
                 }
             }.execute("vial");
+
+             */
         }
     };
 

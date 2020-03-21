@@ -21,6 +21,7 @@ import com.facebook.stetho.Stetho;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
@@ -45,7 +46,7 @@ public class WordLearnerService extends Service {
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
     private WordRepository wordRepository;
-    private ArrayList<Word> allwords;
+    private List<Word> allwords;
 
     @Override
     public void onCreate() {
@@ -55,6 +56,17 @@ public class WordLearnerService extends Service {
         Stetho.initializeWithDefaults(applicationContext);
         WordAPIHelper.getInstance(applicationContext);
         wordRepository = new WordRepository(applicationContext);
+        allwords = wordRepository.getAllWords();
+        Log.d(TAG, "onCreate: " + allwords.size());
+        if (allwords == null || allwords.isEmpty()){
+            Log.d(TAG, "onCreate: " + "setupDB called");
+            setupDbWithWords();
+        }
+
+    }
+
+    public List<Word> getAllwords(){
+        return allwords;
     }
 
     @Nullable
@@ -113,5 +125,32 @@ public class WordLearnerService extends Service {
         if (message != null)
             broadcastIntent.putExtra(Globals.MSG_TO_USER, message);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
+    private void setupDbWithWords(){
+        //ArrayList startWords = new ArrayList<>();
+        for (String word: Globals.START_WORDS) {
+            Word newWord = new Word();
+            //newWord.setWord(word);
+            //wordRepository.deleteWord(newWord);
+            WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
+                @Override
+                public void getResult(Word object) {
+                    wordRepository.addWord(object);
+                }
+            });
+
+        }
+        /*
+        wordRepository.addWords(startWords);
+        WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
+            @Override
+            public void getResult(Word object) {
+                wordRepository.addWord(object);
+            }
+        });
+
+         */
+        broadcastTaskResult("Setup database done");
     }
 }
