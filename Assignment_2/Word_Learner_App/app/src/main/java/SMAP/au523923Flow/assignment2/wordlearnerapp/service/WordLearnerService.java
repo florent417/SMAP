@@ -62,11 +62,16 @@ public class WordLearnerService extends Service {
             Log.d(TAG, "onCreate: " + "setupDB called");
             setupDbWithWords();
         }
+        broadcastTaskResult("");
 
     }
 
     public List<Word> getAllwords(){
         return allwords;
+    }
+
+    public List<Word> getAllWordsFromDB(){
+        return wordRepository.getAllWords();
     }
 
     @Nullable
