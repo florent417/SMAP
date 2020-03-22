@@ -2,6 +2,7 @@ package SMAP.au523923Flow.assignment2.wordlearnerapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 // The idea on how to implement adapter with recycler view is influenced by this playlist on YT
 // https://www.youtube.com/watch?v=5T144CbTwjc&list=PLk7v1Z2rk4hjHrGKo9GqOtLs1e2bglHHA&index=2&fbclid=IwAR16HBg3NMwz2uDT9gbiUgP6QquDEVK5S1UEx3nz49kTvtU_Wisl9XpowUc*/
@@ -78,6 +80,22 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         holder.word.setText(wordListItem.getWord());
         holder.pronunciation.setText(wordListItem.getPronunciation());
         holder.wordRating.setText(wordListItem.getRating());
+        DownloadImageTask downloadImageTask = new DownloadImageTask();
+        Bitmap imgBitmap = null;
+        try {
+            imgBitmap = downloadImageTask.execute(wordListItem.getFirstDefinition().getImageUrl()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(imgBitmap == null){
+            holder.imgView.setImageResource(android.R.drawable.sym_def_app_icon);
+        }
+        else {
+            holder.imgView.setImageBitmap(imgBitmap);
+        }
+        /*
         try {
             ImageView i = holder.imgView;
             Bitmap bitmap = BitmapFactory.decodeStream((InputStream)
@@ -88,6 +106,8 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+         */
         //holder.imgView.setImageResource(wordListItem.getImgResNbr());
     }
 
@@ -122,5 +142,22 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
                 }
             }
         };
+    }
+
+    // Inspired by (See comment from Android Developer):
+    // https://stackoverflow.com/questions/2471935/how-to-load-an-imageview-by-url-in-android
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
     }
 }

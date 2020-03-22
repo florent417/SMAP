@@ -15,6 +15,7 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 // https://codinginflow.com/tutorials/android/room-viewmodel-livedata-recyclerview-mvvm/part-4-repository
 public class WordRepository {
     private WordDAO wordDAO;
+    private static final String TAG = "WordRepository";
 
     public WordRepository(Context context){
         WordLearnerDatabase wordLearnerDatabase = WordLearnerDatabase.getWordDbInstance(context);
@@ -172,6 +173,7 @@ public class WordRepository {
                 wordDAO.addWords(words[0]);
             } catch (Exception e){
                 e.printStackTrace();
+                Log.d(TAG, "Word not added see exception: " + e.toString());
             }
             return null;
         }

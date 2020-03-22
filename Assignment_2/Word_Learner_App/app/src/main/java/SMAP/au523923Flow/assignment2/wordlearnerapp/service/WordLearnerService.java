@@ -23,10 +23,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordRepository;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationFirstRunChecker;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.OWLBOTResponseListener;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.WordAPIHelper;
@@ -40,14 +43,14 @@ the system destroys the service, unless the service was also started by startSer
 */
 
 // OnDestroy gets called
-
 public class WordLearnerService extends Service {
     private static final String TAG = "WordLearnerService";
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
     private WordRepository wordRepository;
     private List<Word> allwords;
-
+    // Flag to signal to ListActivity that words are initialized
+    private boolean wordsReady = false;
 
     private static boolean serviceIsRunning =  false;
 
@@ -55,15 +58,37 @@ public class WordLearnerService extends Service {
     public void onCreate() {
         super.onCreate();
         Context applicationContext = getApplicationContext();
-        // To check database
-        Stetho.initializeWithDefaults(applicationContext);
+
+        enableStethos();
+
         WordAPIHelper.getInstance(applicationContext);
         wordRepository = new WordRepository(applicationContext);
+
+        // To check database and check for first run of app
+        boolean firstRun = ApplicationFirstRunChecker.getFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN);
+        if(firstRun){
+            Log.d(TAG, "First app run");
+            ApplicationFirstRunChecker.setFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN,false);
+            addStartWordsToDb();
+        }
+        else {
+            Executors.newSingleThreadExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    allwords = wordRepository.getAllWords();
+                    broadcastTaskResult("Getting all words from db");
+                }
+            });
+
+        }
+
+        // If still no entries in db, return an empty list
+        if (allwords == null)
+            allwords = new ArrayList<>();
+
+        serviceIsRunning = true;
         
-        Log.d(TAG, "Service.OnCreate() called");
-        
-        //android.os.Debug.waitForDebugger();
-        broadCastInitWordList();
+        Log.d(TAG, "Service is running? : " + serviceIsRunning);
     }
 
     // To keep it running forever? or make it as a foreground service
@@ -75,32 +100,19 @@ public class WordLearnerService extends Service {
         // return START_STICKY;
     }
 
-    private void broadCastInitWordList() {
-
-        serviceIsRunning = true;
-        
-        // Attempt to get all rwords
-        allwords = wordRepository.getAllWords();
-        
-        // Check if words were found
-        if (allwords == null || allwords.isEmpty()){
-            Log.d(TAG, "No words found in database. Populating with new ones");
-            setupDbWithWords();
-        }
-        else
-        {
-            Log.d(TAG, "Words found in database");
-            broadcastTaskResult("");
-        }
-    }
-
-    public List<Word> getAllwords(){
+    public List<Word> getWords(){
         return allwords;
     }
 
     public List<Word> getAllWordsFromDB(){
         return wordRepository.getAllWords();
     }
+
+    public boolean areWordsReady() {
+        return wordsReady;
+    }
+
+    //region Binder implementation
 
     @Nullable
     @Override
@@ -121,72 +133,90 @@ public class WordLearnerService extends Service {
             return WordLearnerService.this;
         }
     }
+    //endregion
 
     // Check if word is already added
     public void addWord(String word){
         WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
             @Override
-            public void getResult(Word object) {
-                wordRepository.addWord(object);
+            public void getResult(Word wordObject) {
+                if (wordObject != null){
+                    wordRepository.addWord(wordObject);
+                    allwords.add(wordObject);
+                    broadcastTaskResult(wordObject.getWord() + " added");
+                }
             }
         });
     }
-
+    /*
     public void deleteWord(String word){
         // Get from list
         Word wordObj = new Word();
         wordObj.setWord(word);
-        wordRepository.deleteWord(wordObj);
+        // Does this work? dont think the objects are the same
+        //allwords.remove(word);
+        Word wordToBeRemoved = wordRepository.getWord(wordObj);
+        wordRepository.deleteWord(wordToBeRemoved);
+        allwords.remove(wordToBeRemoved);
+        allwords = wordRepository.getAllWords();
+        broadcastTaskResult("Deleted word: " + word);
     }
+
+     */
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy: called");
+        serviceIsRunning = false;
+        Log.d(TAG, "onDestroy: called, service is running? " + serviceIsRunning);
         super.onDestroy();
     }
 
     //send local broadcast
     // Add a nullable string to send back to user as a toast
     private void broadcastTaskResult(@Nullable String message){
-        Log.d(TAG, "JobService: Broadcasting result");
+        Log.d(TAG, "WordLearnerService: Broadcasting result");
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(Globals.BROADCAST_WORDLEARNERSERVICE);
 
         if (message != null)
-        {
             broadcastIntent.putExtra(Globals.MSG_TO_USER, message);
-        }
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
-    private void setupDbWithWords() {
-
-        Log.d(TAG, "setupDbWithWords: generating new word");
-        //ArrayList startWords = new ArrayList<>();
+    private void addStartWordsToDb() {
+        Log.d(TAG, "First app run. Populating db with start words from original csv file");
         for (String word: Globals.START_WORDS) {
-            Word newWord = new Word();
-            //newWord.setWord(word);
-            //wordRepository.deleteWord(newWord);
             WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
                 @Override
-                public void getResult(Word object) {
-                    wordRepository.addWord(object);
+                public void getResult(Word wordObject) {
+                    wordRepository.addWord(wordObject);
+                    allwords.add(wordObject);
+                    // Notify for each word added
+                    broadcastTaskResult("Got new start word");
                 }
             });
-
         }
-        /*
-        wordRepository.addWords(startWords);
-        WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
-            @Override
-            public void getResult(Word object) {
-                wordRepository.addWord(object);
-            }
-        });
+    }
 
+    // From L4 persistence TheSituationRoom demo from SMAP
+    //enable stethos tool for inspecting database on device / emulator through chrome
+    private void enableStethos(){
+
+           /* Stetho initialization - allows for debugging features in Chrome browser
+           See http://facebook.github.io/stetho/ for details
+           1) Open chrome://inspect/ in a Chrome browse
+           2) select 'inspect' on your app under the specific device/emulator
+           3) select resources tab
+           4) browse database tables under Web SQL
          */
-        broadcastTaskResult("Setup database done");
+        Stetho.initialize(Stetho.newInitializerBuilder(this)
+                .enableDumpapp(
+                        Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(
+                        Stetho.defaultInspectorModulesProvider(this))
+                .build());
+        /* end Stethos */
     }
 }

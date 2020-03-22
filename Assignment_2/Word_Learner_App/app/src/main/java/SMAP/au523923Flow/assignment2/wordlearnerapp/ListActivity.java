@@ -25,6 +25,7 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService.LocalBinder;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationFirstRunChecker;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DataHelper;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Do not count on Onstop for data clean up since it never gets called
-
 public class ListActivity extends AppCompatActivity {
     private static final String TAG = "ListActivity";
 
@@ -47,7 +47,6 @@ public class ListActivity extends AppCompatActivity {
     // Should this be a resource?
     private final int EDIT_REQ = 1;
 
-    // Wordlist
     List<Word> wordListItems = new ArrayList<>();
 
     // ----- Service Binding ------
@@ -55,48 +54,34 @@ public class ListActivity extends AppCompatActivity {
     private WordLearnerService wordLearnerService;
     boolean boundToService = false;
 
+    //region Activity life cycles
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
         initUI();
-        
-        Intent backgroundServiceIntent = startService();
         setupServiceConn();
-        bindToService(backgroundServiceIntent);
+        registerBroadcastWordsUpdateListener();
+        bindToWordLearnerService();
     }
 
-    
-
-    // ------------ Service functionality -------------------
-    Intent startService() {
-        // Start service
-        Intent backgroundServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-        } else {
-            Log.d(TAG, "Shitty ass android version. Starting service explicity");
-            startService(backgroundServiceIntent);
-        }
-
-        return backgroundServiceIntent;
+    @Override
+    protected void onStop() {
+        wordLearnerService = null;
+        unbindService(connection);
+        boundToService = false;
+        super.onStop();
     }
 
+
+    //endregion
+
     
+    //region Service functionality
     private void setupServiceConn() {
-
-        // TODO: Maybe delete?
-        // IntentFilter filter = new IntentFilter();
-        // filter.addAction(Globals.BROADCAST_WORDLEARNERSERVICE);
-
-        //can use registerReceiver(...)
-        //but using local broadcasts for this service:
-        
-
         connection = new ServiceConnection() {
-
             @Override
             public void onServiceConnected(ComponentName className,
                                         IBinder service) {
@@ -108,35 +93,31 @@ public class ListActivity extends AppCompatActivity {
                 //TODO: probably a good place to update UI after data loading
                 // E.g. get from database
 
-                listenToWordUpdate();
-
+                //wordListItems = wordLearnerService.getAllWordsFromDB();
+                //for (Word word : wordListItems){ wordLearnerService.deleteWord(word.getWord());}
+                //updateAdapterWithWords(wordListItems);
             }
 
             @Override
             public void onServiceDisconnected(ComponentName className) {
                 boundToService = false;
-                Log.d(TAG, "Disconnected fromservice");
+                Log.d(TAG, "Disconnected from service");
             }
         };
     }
 
-
-    private void bindToService(Intent backgroundServiceIntent) {
-        
-        // bindService(backgroundServiceIntent, connection, Context.BIND_AUTO_CREATE);
-        bindService(new Intent(ListActivity.this, WordLearnerService.class), connection, Context.BIND_AUTO_CREATE);
-        Log.d(TAG, "Binded to Wordservice");
-    }
-
-    
-    private void listenToWordUpdate() {
+    private void registerBroadcastWordsUpdateListener (){
         IntentFilter filter = new IntentFilter();
         filter.addAction(Globals.BROADCAST_WORDLEARNERSERVICE);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(onBackgroundServiceResult, filter);
     }
-    
-    
+
+    private void bindToWordLearnerService() {
+        Intent bindServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
+        bindService(bindServiceIntent, connection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "Binded to Word Learner Service");
+    }
 
     //define our broadcast receiver for (local) broadcasts.
     // Registered and unregistered in onStart() and onStop() methods
@@ -144,7 +125,8 @@ public class ListActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // List<Word> wordListItems = initWordListData(savedInstanceState);
-            List<Word> wordListItems = wordLearnerService.getAllWordsFromDB();
+            // prob db words instead
+            wordListItems = wordLearnerService.getWords();
             
             if (wordListItems == null) {
                 Log.d(TAG, "Failed to get wordListItems. Reason: Null reference ");
@@ -154,10 +136,15 @@ public class ListActivity extends AppCompatActivity {
             Log.d(TAG, "Got wordlist - Length: " + wordListItems.size());
 
             // Update adapter to show new words
-            adapter.setWordList(wordListItems);
-            adapter.notifyDataSetChanged();
+            updateAdapterWithWords(wordListItems);
         }
     };
+
+    private void updateAdapterWithWords(List<Word> words){
+        adapter.setWordList(words);
+        adapter.notifyDataSetChanged();
+    }
+    //endregion
 
     private List<Word> initWordListData(Bundle savedInstanceState){
         if (savedInstanceState != null)
@@ -169,37 +156,8 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    // -------------- Activity life cycles --------------
-    //region Activity life cycles
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Intent intent = new Intent(ListActivity.this, WordLearnerService.class);
-        // bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-        // IntentFilter filter = new IntentFilter();
-        // filter.addAction(Globals.BROADCAST_WORDLEARNERSERVICE);
-
-        // //can use registerReceiver(...)
-        // //but using local broadcasts for this service:
-        // LocalBroadcastManager.getInstance(this).registerReceiver(onBackgroundServiceResult, filter);
-    }
-     
-    
-    @Override
-    protected void onStop() {
-        wordLearnerService = null;
-        unbindService(connection);
-        boundToService = false;
-        super.onStop();
-    }
-
-    //endregion
-
-    // ------------- UI STUFF -------------------
     //region UI
-    
-    // Initilize all the ui
+
     private void initUI() {
         exitBtn = findViewById(R.id.exitBtn);
         exitBtn.setOnClickListener(exitBtnListener);
@@ -214,10 +172,16 @@ public class ListActivity extends AppCompatActivity {
         testDelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wordLearnerService.deleteWord("vial");
+                /*for (Word word : wordListItems) {
+                    wordLearnerService.deleteWord(word.getWord());
+                }
+
+                 */
+                //wordLearnerService.deleteWord("vial");
             }
         });
 
+        // Move this
         setUpRecyclerView();
     }
 
@@ -260,8 +224,3 @@ public class ListActivity extends AppCompatActivity {
     };
     //endregion
 }
-
-// Changed the file animal_list.csv according to the info on this post
-// https://stackoverflow.com/questions/8432584/how-to-make-notepad-to-save-text-in-utf-8-without-bom
-// and it worked, since it didn't read the lion correctly.
-// Also kudo picture and word were not the same string so changed it to kudo, to match the drawable

@@ -9,8 +9,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,11 +54,11 @@ public class WordAPIHelper {
         // Test word
         String url = Globals.OWLBOT_API_CALL + word;
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        Word wordObj = WordJsonParser.parseWordJsonWithGson(response);
+                    public void onResponse(JSONObject response) {
+                        Word wordObj = WordJsonParser.parseWordJsonWithGson(response.toString());
                         listener.getResult(wordObj);
                     }
                 },
@@ -74,6 +77,7 @@ public class WordAPIHelper {
                         //return super.getHeaders();
                         Map<String, String> params = new HashMap<>();
                         params.put(Globals.OWLBOT_HEADER_AUTH_KEY, Globals.OWLBOT_HEADER_AUTH_VAL);
+                        //params.put("Content-type", "application/json;charset=UTF-8");
                         return params;
                     }
                 };
