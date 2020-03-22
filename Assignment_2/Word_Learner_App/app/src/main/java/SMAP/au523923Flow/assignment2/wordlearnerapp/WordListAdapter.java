@@ -2,6 +2,7 @@ package SMAP.au523923Flow.assignment2.wordlearnerapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     private List<Word> wordListItems;
     private Context context;
     private OnItemListClickListener mOnItemListClick;
+    private String TAG = "WordListAdapter";
 
     WordListAdapter(Context context, List<Word> wordListItems) {
         this.wordListItems = wordListItems;
@@ -37,10 +39,12 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     public interface OnItemListClickListener {
         void onItemListClick(int position);
     }
-
+    
     void setOnItemListClickListener(OnItemListClickListener itemListClickListener){
         mOnItemListClick = itemListClickListener;
     }
+
+    
 
     Word getWordListItem(int position){
         return wordListItems.get(position);
@@ -48,6 +52,12 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
     void updateWordListItem(int position, Word wordItem){
         wordListItems.set(position,wordItem);
     }
+
+    public void setWordList(List<Word> wordlist) {
+        Log.d(TAG, "Adapter: Wordlist updated");
+        wordListItems = wordlist;
+    }
+
     List<Word> getWordListItems() {
         return wordListItems;
     }

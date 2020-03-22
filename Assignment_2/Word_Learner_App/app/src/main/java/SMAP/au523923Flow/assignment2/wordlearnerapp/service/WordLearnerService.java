@@ -48,6 +48,9 @@ public class WordLearnerService extends Service {
     private WordRepository wordRepository;
     private List<Word> allwords;
 
+
+    private static boolean serviceIsRunning =  false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -56,14 +59,39 @@ public class WordLearnerService extends Service {
         Stetho.initializeWithDefaults(applicationContext);
         WordAPIHelper.getInstance(applicationContext);
         wordRepository = new WordRepository(applicationContext);
+        
+        Log.d(TAG, "Service.OnCreate() called");
+        
+        //android.os.Debug.waitForDebugger();
+        broadCastInitWordList();
+    }
+
+    // To keep it running forever? or make it as a foreground service
+    // onDestroy still called when leaving listActivity
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        return START_NOT_STICKY;
+        // return START_STICKY;
+    }
+
+    private void broadCastInitWordList() {
+
+        serviceIsRunning = true;
+        
+        // Attempt to get all rwords
         allwords = wordRepository.getAllWords();
-        Log.d(TAG, "onCreate: " + allwords.size());
+        
+        // Check if words were found
         if (allwords == null || allwords.isEmpty()){
-            Log.d(TAG, "onCreate: " + "setupDB called");
+            Log.d(TAG, "No words found in database. Populating with new ones");
             setupDbWithWords();
         }
-        broadcastTaskResult("");
-
+        else
+        {
+            Log.d(TAG, "Words found in database");
+            broadcastTaskResult("");
+        }
     }
 
     public List<Word> getAllwords(){
@@ -80,12 +108,7 @@ public class WordLearnerService extends Service {
         return binder;
     }
 
-    // To keep it running forever? or make it as a foreground service
-    // onDestroy still called when leaving listActivity
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_NOT_STICKY;
-    }
+    
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -118,21 +141,29 @@ public class WordLearnerService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestroy: called");
+        super.onDestroy();
     }
 
     //send local broadcast
     // Add a nullable string to send back to user as a toast
     private void broadcastTaskResult(@Nullable String message){
+        Log.d(TAG, "JobService: Broadcasting result");
+
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(Globals.BROADCAST_WORDLEARNERSERVICE);
+
         if (message != null)
+        {
             broadcastIntent.putExtra(Globals.MSG_TO_USER, message);
+        }
+
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
-    private void setupDbWithWords(){
+    private void setupDbWithWords() {
+
+        Log.d(TAG, "setupDbWithWords: generating new word");
         //ArrayList startWords = new ArrayList<>();
         for (String word: Globals.START_WORDS) {
             Word newWord = new Word();
