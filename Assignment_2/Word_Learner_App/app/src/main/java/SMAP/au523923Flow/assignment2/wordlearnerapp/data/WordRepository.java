@@ -11,6 +11,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DbOperationsListener;
+
+// The mindset behind making the repository and teh callback flow
+// is fist of all to separate functionality, so async tasks to the
+// db is done here. The callback flow is added to control what happens
+// in the service, so it is possible to call e.g. broadcast functions
+// only when the operations are done, and also to check if the
+// operations were actually executed and handle it in the service if
+// they weren't executed and e.g. null object is returned.
+
 // Inspired by :
 // https://codinginflow.com/tutorials/android/room-viewmodel-livedata-recyclerview-mvvm/part-4-repository
 public class WordRepository {
@@ -22,20 +32,15 @@ public class WordRepository {
         wordDAO = wordLearnerDatabase.wordDAO();
     }
 
-    public List<Word> getAllWords() {
-        GetAllWordsAsyncTask getAllWordsAsyncTask = new GetAllWordsAsyncTask(wordDAO);
-        try {
-            return getAllWordsAsyncTask.execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getAllWords(DbOperationsListener<List<Word>> listener) {
+        GetAllWordsAsyncTask getAllWordsAsyncTask = new GetAllWordsAsyncTask(wordDAO, listener);
+        getAllWordsAsyncTask.execute();
     }
 
-    public Word getWord(Word word) {
-        GetWordAsyncTask getWordAsyncTask = new GetWordAsyncTask(wordDAO);
+    public void getWord(String word, DbOperationsListener<Word> listener) {
+        GetWordAsyncTask getWordAsyncTask = new GetWordAsyncTask(wordDAO, listener);
+        getWordAsyncTask.execute(word);
+        /*
         try {
             return getWordAsyncTask.execute(word).get();
         } catch (ExecutionException e) {
@@ -44,6 +49,8 @@ public class WordRepository {
             e.printStackTrace();
         }
         return null;
+
+         */
     }
 
     public void addWord(Word word){
@@ -52,29 +59,33 @@ public class WordRepository {
         addWordAsyncTask.execute(word);
     }
 
-    public void addWords(List<Word> words){
-        AddWordsAsyncTask addWordsAsyncTask = new AddWordsAsyncTask(wordDAO);
-
-        addWordsAsyncTask.execute(words);
-    }
-
-    public void deleteWord(Word word){
-        DeleteWordAsyncTask deleteWordAsyncTask = new DeleteWordAsyncTask(wordDAO);
+    public void deleteWord(Word word, DbOperationsListener<Word> listener){
+        DeleteWordAsyncTask deleteWordAsyncTask = new DeleteWordAsyncTask(wordDAO, listener, word);
 
         deleteWordAsyncTask.execute(word);
     }
 
-    public void updateWord(Word word){
-        UpdateWordAsyncTask updateWordAsyncTask = new UpdateWordAsyncTask(wordDAO);
+    public void updateWord(Word word, DbOperationsListener<Word> listener){
+        UpdateWordAsyncTask updateWordAsyncTask = new UpdateWordAsyncTask(wordDAO, listener);
 
         updateWordAsyncTask.execute(word);
     }
 
+    public void addWords(List<Word> words, DbOperationsListener<List<Word>> listener){
+        AddWordsAsyncTask addWordsAsyncTask = new AddWordsAsyncTask(wordDAO, listener);
+
+        addWordsAsyncTask.execute(words);
+    }
+
+    //region AsyncTasks
+
     private class GetAllWordsAsyncTask extends AsyncTask<Void, Void, List<Word>> {
         private WordDAO wordDAO;
+        private DbOperationsListener<List<Word>> listener;
 
-        private GetAllWordsAsyncTask(WordDAO wordDAO){
+        private GetAllWordsAsyncTask(WordDAO wordDAO, DbOperationsListener<List<Word>> listener){
             this.wordDAO = wordDAO;
+            this.listener = listener;
         }
 
         @Override
@@ -86,23 +97,35 @@ public class WordRepository {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(List<Word> words) {
+            listener.DbOperationDone(words);
+        }
     }
 
-    private class GetWordAsyncTask extends AsyncTask<Word, Void, Word> {
+    private class GetWordAsyncTask extends AsyncTask<String, Void, Word> {
         private WordDAO wordDAO;
+        private DbOperationsListener<Word> listener;
 
-        private GetWordAsyncTask(WordDAO wordDAO){
+        private GetWordAsyncTask(WordDAO wordDAO, DbOperationsListener<Word> listener){
             this.wordDAO = wordDAO;
+            this.listener = listener;
         }
 
         @Override
-        protected Word doInBackground(Word... words) {
+        protected Word doInBackground(String... words) {
             try {
-                return wordDAO.getWord(words[0].getWord());
+                return wordDAO.getWord(words[0]);
             } catch (Exception e){
+                Log.d(TAG, "failed to get " + words[0]);
                 e.printStackTrace();
             }
             return null;
+        }
+        @Override
+        protected void onPostExecute(Word word) {
+            listener.DbOperationDone(word);
         }
     }
 
@@ -118,64 +141,98 @@ public class WordRepository {
             try {
                 wordDAO.addWord(words[0]);
             } catch (Exception e){
+                Log.d(TAG, "Failed to add " + words[0].getWord());
                 e.printStackTrace();
             }
             return null;
         }
+        // Since the listener is implemented in the api helper
+        // it is not necessary to implement it here as well
     }
 
-    private class DeleteWordAsyncTask extends AsyncTask<Word, Void, Void> {
+    private class DeleteWordAsyncTask extends AsyncTask<Word, Void, Word> {
         private WordDAO wordDAO;
+        private DbOperationsListener<Word> listener;
+        private Word word;
 
-        private DeleteWordAsyncTask(WordDAO wordDAO){
+        private DeleteWordAsyncTask(WordDAO wordDAO, DbOperationsListener<Word> listener, Word word){
             this.wordDAO = wordDAO;
+            this.listener = listener;
+            this.word = word;
         }
 
         @Override
-        protected Void doInBackground(Word... words) {
+        protected Word doInBackground(Word... words) {
             try {
+                // If successful return the word that has been added
                 wordDAO.deleteWord(words[0]);
+                Log.d(TAG, words[0].getWord() + "successfully deleted from db");
+                return word;
             } catch (Exception e){
+                Log.d(TAG, "Failed to delete " + words[0].getWord());
                 e.printStackTrace();
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Word word) {
+            listener.DbOperationDone(word);
+        }
     }
 
-    private class UpdateWordAsyncTask extends AsyncTask<Word, Void, Void> {
+    private class UpdateWordAsyncTask extends AsyncTask<Word, Void, Word> {
         private WordDAO wordDAO;
+        private DbOperationsListener<Word> listener;
 
-        private UpdateWordAsyncTask(WordDAO wordDAO){
+        private UpdateWordAsyncTask(WordDAO wordDAO, DbOperationsListener<Word> listener){
             this.wordDAO = wordDAO;
+            this.listener = listener;
         }
 
         @Override
-        protected Void doInBackground(Word... words) {
+        protected Word doInBackground(Word... words) {
             try {
                 wordDAO.updateWord(words[0]);
+                return words[0];
             } catch (Exception e){
                 e.printStackTrace();
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Word word) {
+            listener.DbOperationDone(word);
+        }
     }
 
-    private class AddWordsAsyncTask extends AsyncTask<List<Word>, Void, Void> {
+    private class AddWordsAsyncTask extends AsyncTask<List<Word>, Void, List<Word>> {
         private WordDAO wordDAO;
+        private DbOperationsListener<List<Word>> listener;
 
-        private AddWordsAsyncTask(WordDAO wordDAO){
+        private AddWordsAsyncTask(WordDAO wordDAO, DbOperationsListener<List<Word>> listener){
             this.wordDAO = wordDAO;
+            this.listener = listener;
         }
 
         @Override
-        protected Void doInBackground(List<Word>... words) {
+        protected List<Word> doInBackground(List<Word>... words) {
             try {
                 wordDAO.addWords(words[0]);
+                return words[0];
             } catch (Exception e){
                 e.printStackTrace();
                 Log.d(TAG, "Word not added see exception: " + e.toString());
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(List<Word> words) {
+            listener.DbOperationDone(words);
+        }
     }
+
+    //endregion
 }

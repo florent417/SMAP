@@ -60,13 +60,19 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        if (savedInstanceState != null){
+            wordListItems = savedInstanceState.getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
+        }
 
         initUI();
         setupServiceConn();
         registerBroadcastWordsUpdateListener();
         bindToWordLearnerService();
+
+        // If Service is running (check) getallwords
     }
 
+    // TODO: DELETE THIS
     @Override
     protected void onStop() {
         wordLearnerService = null;
@@ -145,7 +151,7 @@ public class ListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
     //endregion
-
+    /*
     private List<Word> initWordListData(Bundle savedInstanceState){
         if (savedInstanceState != null)
             return savedInstanceState
@@ -156,11 +162,14 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+     */
+
     //region UI
 
     private void initUI() {
         exitBtn = findViewById(R.id.exitBtn);
         exitBtn.setOnClickListener(exitBtnListener);
+        /*
         testAddBtn = findViewById(R.id.testAddBtn);
         testDelBtn = findViewById(R.id.testDelBtn);
         testAddBtn.setOnClickListener(new View.OnClickListener() {
@@ -172,15 +181,10 @@ public class ListActivity extends AppCompatActivity {
         testDelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*for (Word word : wordListItems) {
-                    wordLearnerService.deleteWord(word.getWord());
-                }
-
-                 */
-                //wordLearnerService.deleteWord("vial");
+                wordLearnerService.deleteWord("giraffe");
             }
         });
-
+        */
         // Move this
         setUpRecyclerView();
     }
@@ -222,5 +226,14 @@ public class ListActivity extends AppCompatActivity {
             startActivityForResult(intent, EDIT_REQ);
         }
     };
+    //endregion
+
+    //region Saved instance state
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<Word> savedInstanceStateList = new ArrayList<Word>(adapter.getWordListItems());
+        outState.putParcelableArrayList(getString(R.string.WORD_LIST_ARRAY),savedInstanceStateList);
+    }
     //endregion
 }

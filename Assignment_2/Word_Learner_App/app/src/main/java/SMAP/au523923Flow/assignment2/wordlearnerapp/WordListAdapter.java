@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
 
@@ -80,35 +82,19 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         holder.word.setText(wordListItem.getWord());
         holder.pronunciation.setText(wordListItem.getPronunciation());
         holder.wordRating.setText(wordListItem.getRating());
-        DownloadImageTask downloadImageTask = new DownloadImageTask();
-        Bitmap imgBitmap = null;
-        try {
-            imgBitmap = downloadImageTask.execute(wordListItem.getFirstDefinition().getImageUrl()).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(imgBitmap == null){
-            holder.imgView.setImageResource(android.R.drawable.sym_def_app_icon);
-        }
-        else {
-            holder.imgView.setImageBitmap(imgBitmap);
-        }
-        /*
-        try {
-            ImageView i = holder.imgView;
-            Bitmap bitmap = BitmapFactory.decodeStream((InputStream)
-                    new URL(wordListItem.getFirstDefinition().getImageUrl()).getContent());
-            i.setImageBitmap(bitmap);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-         */
-        //holder.imgView.setImageResource(wordListItem.getImgResNbr());
+        // Get img url to set img in ImageView
+        String imageUrl = wordListItem.getFirstDefinition().getImageUrl();
+        // By calling load with Picasso, it gets executed asynchronously
+        // and the ImageView gets the image after it gets loaded
+        // If an error occurs or there is no imageurl, the image is set to a default drawable.
+        // The images get cached as well so its not necessary to get the images from the url
+        // all the time
+        // see : https://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library
+        Picasso.with(context)
+                .load(imageUrl)
+                .placeholder(android.R.drawable.sym_def_app_icon)
+                .error(android.R.drawable.sym_def_app_icon)
+                .into(holder.imgView);
     }
 
     @Override
@@ -142,22 +128,5 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
                 }
             }
         };
-    }
-
-    // Inspired by (See comment from Android Developer):
-    // https://stackoverflow.com/questions/2471935/how-to-load-an-imageview-by-url-in-android
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
     }
 }
