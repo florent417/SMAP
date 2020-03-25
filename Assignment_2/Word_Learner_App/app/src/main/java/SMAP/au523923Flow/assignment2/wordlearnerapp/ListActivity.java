@@ -64,6 +64,17 @@ public class ListActivity extends AppCompatActivity {
             wordListItems = savedInstanceState.getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
         }
 
+        // THIS WORKS!!
+        // TODO: Create function, and check if service is already started
+        Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(startServiceIntent);
+        }
+        else {
+            startService(startServiceIntent);
+        }
+
         initUI();
         setupServiceConn();
         registerBroadcastWordsUpdateListener();
@@ -72,7 +83,7 @@ public class ListActivity extends AppCompatActivity {
         // If Service is running (check) getallwords
     }
 
-    // TODO: DELETE THIS
+    // TODO: Maybe move to unpaused?
     @Override
     protected void onStop() {
         wordLearnerService = null;
