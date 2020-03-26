@@ -8,6 +8,7 @@ public class Globals {
     public static final String MSG_TO_USER = "Message to user";
     public static final String DATABASE_NAME = "Word-Learner_Database";
     public static final String IS_FIRST_RUN = "applicationIsFirstTimeRun";
+    public static final String CHOSEN_WORD = "chosenWord";
 
     public static final String[] START_WORDS = {"buffalo", "camel", "cheetah",
             "crocodile", "elephant", "giraffe", "gnu", "kudo", "leopard", "lion", "oryx", "ostrich",

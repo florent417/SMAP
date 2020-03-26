@@ -3,14 +3,27 @@ package SMAP.au523923Flow.assignment2.wordlearnerapp;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 
 // Since the system by default uses the Bundle instance to save information about the view
 // in the activity, onSaveInstanceState is not implemented for this activity, neither the
@@ -18,43 +31,81 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
 // Inspiration:
 // https://stackoverflow.com/questions/45314262/android-view-what-is-automatically-saved-and-restored-in-an-activity
 public class DetailsActivity extends AppCompatActivity {
+    private static final String TAG = "DetailsActivity";
+
     private ImageView wordImage;
     private TextView word, pronunciation, rating, description, notes;
     private Button cancelBtn, editBtn;
     // Should this be a resource?
     private final int EDIT_REQ = 1;
 
+    // ########## Service Binding Variables ##########
+    ServiceConnection connection;
+    private WordLearnerService wordLearnerService;
+    boolean boundToService = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        setupUI();
+        setupServiceConn();
+        bindToWordLearnerService();
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        wordLearnerService = null;
+        unbindService(connection);
+        boundToService = false;
+        super.onStop();
+    }
+
+    // ########## Service functionality ##########
+    //region Service functionality
+    // Ref: SMAP L5 ServicesDemo code
+    private void setupServiceConn() {
+        connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                Log.d(TAG, "Connected to service");
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                WordLearnerService.LocalBinder binder = (WordLearnerService.LocalBinder) service;
+                wordLearnerService = binder.getService();
+                boundToService = true;
+
+                // TODO: implement get word
+                setUpDetails();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName className) {
+                boundToService = false;
+                wordLearnerService = null;
+                Log.d(TAG, "Disconnected from service");
+            }
+        };
+    }
+
+    private void bindToWordLearnerService() {
+        Intent bindServiceIntent = new Intent(DetailsActivity.this, WordLearnerService.class);
+        bindService(bindServiceIntent, connection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "Binded to Word Learner Service");
+    }
+    //endregion
+
+    // ########## UI Setup ##########
+    private void setupUI(){
         wordImage = findViewById(R.id.detailsWordImg);
         word = findViewById(R.id.detailsWord);
         pronunciation = findViewById(R.id.detailsPronunciation);
         rating = findViewById(R.id.detailsWordRating);
         description = findViewById(R.id.descriptionText);
         notes = findViewById(R.id.detailsNotesText);
-
-        Intent intent = getIntent();
-        Bundle intentBundle = intent.getExtras();
-
-        if(intentBundle != null){
-
-            WordListItem wordListItem = intentBundle.getParcelable(getString(R.string.WORD_LIST_ITEM));
-
-            if (wordListItem != null){
-                word.setText(wordListItem.getWord());
-                pronunciation.setText(wordListItem.getPronunciation());
-                rating.setText(wordListItem.getRating());
-                String notesTxt = wordListItem.getNotes();
-                if (notesTxt != null){
-                    notes.setText(notesTxt);
-                }
-                wordImage.setImageResource(wordListItem.getImgResNbr());
-                description.setText(wordListItem.getDescription());
-            }
-        }
 
         cancelBtn = findViewById(R.id.detailsCancelBtn);
         editBtn = findViewById(R.id.editBtn);
@@ -63,6 +114,40 @@ public class DetailsActivity extends AppCompatActivity {
         editBtn.setOnClickListener(editOnClickListener);
     }
 
+    public void setUpDetails(){
+        Intent intent = getIntent();
+        Bundle intentBundle = intent.getExtras();
+
+        if(intentBundle != null){
+
+            String wordStr = intentBundle.getString(Globals.CHOSEN_WORD);
+            Log.d(TAG, "setUpDetails: " + wordStr);
+            Word wordObj = wordLearnerService.getWord(wordStr);
+
+            if (wordObj != null){
+                word.setText(wordObj.getWord());
+                pronunciation.setText(wordObj.getPronunciation());
+                rating.setText(wordObj.getRating());
+                String notesTxt = wordObj.getNotes();
+                if (notesTxt != null){
+                    notes.setText(notesTxt);
+                }
+                String imageUrl = wordObj.getFirstDefinition().getImageUrl();
+                Picasso.with(DetailsActivity.this)
+                        .load(imageUrl)
+                        .placeholder(android.R.drawable.sym_def_app_icon)
+                        .error(android.R.drawable.sym_def_app_icon)
+                        .into(wordImage);
+                String definition = wordObj.getFirstDefinition().getDefinition();
+                if (definition != null) {
+                    description.setText(definition);
+                }
+            }
+        }
+    }
+
+
+
     private View.OnClickListener editOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View wordItemView) {
@@ -70,8 +155,8 @@ public class DetailsActivity extends AppCompatActivity {
             Intent intentFromListActivity = getIntent();
 
             // Send the same data object, since nothing can be changed in this activity
-            WordListItem dataToSend = intentFromListActivity.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
-            intentToNewActivity.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
+            WordListItem dataToSend = intentFromListActivity.getParcelableExtra(Globals.CHOSEN_WORD);
+            intentToNewActivity.putExtra(Globals.CHOSEN_WORD,dataToSend);
 
             startActivityForResult(intentToNewActivity,EDIT_REQ);
         }
@@ -85,6 +170,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
     };
 
+    // TODO: Delete this??
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 
-// Inspired by the WeatherServiceDemos in this course from L6
+// Inspired by the WeatherServiceDemos in SMAP from L6
 
 public class WordJsonParser {
 
@@ -20,6 +20,4 @@ public class WordJsonParser {
             return null;
         }
     }
-
-    // Maybe add for definition
 }

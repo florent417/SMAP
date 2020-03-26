@@ -10,6 +10,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 
 public class EditActivity extends AppCompatActivity {
     private TextView wordName, wordRating, wordNotes;
@@ -29,7 +30,7 @@ public class EditActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if(intent != null){
-            WordListItem wordListItem = intent.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
+            WordListItem wordListItem = intent.getParcelableExtra(Globals.CHOSEN_WORD);
             if (wordListItem != null){
                 wordName.setText(wordListItem.getWord());
                 wordRating.setText(wordListItem.getRating());
@@ -55,13 +56,13 @@ public class EditActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent intentFromDetailsActivity = getIntent();
 
-            WordListItem dataToSend = intentFromDetailsActivity.getParcelableExtra(getString(R.string.WORD_LIST_ITEM));
+            WordListItem dataToSend = intentFromDetailsActivity.getParcelableExtra(Globals.CHOSEN_WORD);
             // Update the data
             dataToSend.setRating(wordRating.getText().toString());
             dataToSend.setNotes(wordNotes.getText().toString());
 
             Intent output = new Intent();
-            output.putExtra(getString(R.string.WORD_LIST_ITEM),dataToSend);
+            output.putExtra(Globals.CHOSEN_WORD,dataToSend);
 
             setResult(RESULT_OK, output);
             finish();

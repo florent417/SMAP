@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
@@ -32,40 +33,69 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 // Do not count on Onstop for data clean up since it never gets called
 public class ListActivity extends AppCompatActivity {
     private static final String TAG = "ListActivity";
 
-    // ----- UI Stuff ------
+    // ########## UI Variables ##########
     private RecyclerView recyclerView;
     private WordListAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private Button exitBtn;
-    private Button testAddBtn;
-    private Button testDelBtn;
+    private Button addBtn;
+    private EditText userSearchWord;
     // Should this be a resource?
     private final int EDIT_REQ = 1;
 
+    // ########## Words ###########
     List<Word> wordListItems = new ArrayList<>();
 
-    // ----- Service Binding ------
+    // ########## Service Binding Variables ##########
     ServiceConnection connection;
     private WordLearnerService wordLearnerService;
     boolean boundToService = false;
 
+    // ########## Activity life cycles ##########
     //region Activity life cycles
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
         if (savedInstanceState != null){
             wordListItems = savedInstanceState.getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
         }
 
-        // THIS WORKS!!
-        // TODO: Create function, and check if service is already started
+        startServiceAsForegroundService();
+
+        initUI();
+
+        setupServiceConn();
+    }
+
+    // Safest way
+    @Override
+    protected void onStart() {
+        registerBroadcastWordsUpdateListener();
+        bindToWordLearnerService();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        wordLearnerService = null;
+        unbindService(connection);
+        boundToService = false;
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onWordLearnerBroadcastResult);
+        super.onStop();
+    }
+    //endregion
+
+    // ########## Service functionality and implementation ##########
+    public void startServiceAsForegroundService(){
+        // TODO: check if service is already started
         Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -74,29 +104,11 @@ public class ListActivity extends AppCompatActivity {
         else {
             startService(startServiceIntent);
         }
-
-        initUI();
-        setupServiceConn();
-        registerBroadcastWordsUpdateListener();
-        bindToWordLearnerService();
-
-        // If Service is running (check) getallwords
     }
 
-    // TODO: Maybe move to unpaused?
-    @Override
-    protected void onStop() {
-        wordLearnerService = null;
-        unbindService(connection);
-        boundToService = false;
-        super.onStop();
-    }
-
-
-    //endregion
-
-    
+    // ########## Service functionality ##########
     //region Service functionality
+    // Ref: SMAP L5 ServicesDemo code
     private void setupServiceConn() {
         connection = new ServiceConnection() {
             @Override
@@ -107,27 +119,21 @@ public class ListActivity extends AppCompatActivity {
                 LocalBinder binder = (LocalBinder) service;
                 wordLearnerService = binder.getService();
                 boundToService = true;
-                //TODO: probably a good place to update UI after data loading
-                // E.g. get from database
 
-                //wordListItems = wordLearnerService.getAllWordsFromDB();
-                //for (Word word : wordListItems){ wordLearnerService.deleteWord(word.getWord());}
-                //updateAdapterWithWords(wordListItems);
+                if (wordListItems.size() == 0){
+                    List<Word> allWords = wordLearnerService.getWords();
+                    wordListItems = allWords != null ? allWords : new ArrayList<Word>();
+                    updateAdapterWithWords(wordListItems);
+                }
             }
 
             @Override
             public void onServiceDisconnected(ComponentName className) {
                 boundToService = false;
+                wordLearnerService = null;
                 Log.d(TAG, "Disconnected from service");
             }
         };
-    }
-
-    private void registerBroadcastWordsUpdateListener (){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Globals.BROADCAST_WORDLEARNERSERVICE);
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(onBackgroundServiceResult, filter);
     }
 
     private void bindToWordLearnerService() {
@@ -136,32 +142,40 @@ public class ListActivity extends AppCompatActivity {
         Log.d(TAG, "Binded to Word Learner Service");
     }
 
-    //define our broadcast receiver for (local) broadcasts.
-    // Registered and unregistered in onStart() and onStop() methods
-    private BroadcastReceiver onBackgroundServiceResult = new BroadcastReceiver() {
+    private void registerBroadcastWordsUpdateListener (){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Globals.BROADCAST_WORDLEARNERSERVICE);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(onWordLearnerBroadcastResult, filter);
+    }
+
+    // ########## Broadcast receiver implementation ##########
+    private BroadcastReceiver onWordLearnerBroadcastResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // List<Word> wordListItems = initWordListData(savedInstanceState);
-            // prob db words instead
-            wordListItems = wordLearnerService.getWords();
-            
-            if (wordListItems == null) {
+            List<Word> allWords = wordLearnerService.getWords();
+
+            if (allWords == null) {
                 Log.d(TAG, "Failed to get wordListItems. Reason: Null reference ");
-                return;
+                wordListItems = new ArrayList<>();
+            }
+            else{
+                wordListItems = allWords;
             }
 
-            Log.d(TAG, "Got wordlist - Length: " + wordListItems.size());
+            Log.d(TAG, "Wordlist Length: " + wordListItems.size());
+
+            // Show message to user if message exists
+            String messageToUser = intent.getStringExtra(Globals.MSG_TO_USER);
+            if (messageToUser != null)
+                Toast.makeText(ListActivity.this, messageToUser, Toast.LENGTH_SHORT).show();
 
             // Update adapter to show new words
             updateAdapterWithWords(wordListItems);
         }
     };
 
-    private void updateAdapterWithWords(List<Word> words){
-        adapter.setWordList(words);
-        adapter.notifyDataSetChanged();
-    }
-    //endregion
+    // TODO: Delete or update
     /*
     private List<Word> initWordListData(Bundle savedInstanceState){
         if (savedInstanceState != null)
@@ -175,31 +189,19 @@ public class ListActivity extends AppCompatActivity {
 
      */
 
+    // ########## UI Implementation and functionality ##########
     //region UI
-
     private void initUI() {
+        userSearchWord = findViewById(R.id.searchWordInput);
+        addBtn = findViewById(R.id.addBtn);
+        addBtn.setOnClickListener(addBtnListener);
         exitBtn = findViewById(R.id.exitBtn);
         exitBtn.setOnClickListener(exitBtnListener);
-        /*
-        testAddBtn = findViewById(R.id.testAddBtn);
-        testDelBtn = findViewById(R.id.testDelBtn);
-        testAddBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wordLearnerService.addWord("vial");
-            }
-        });
-        testDelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wordLearnerService.deleteWord("giraffe");
-            }
-        });
-        */
-        // Move this
+
         setUpRecyclerView();
     }
 
+    // ########## Recycler view and Adapter implementation
     private void setUpRecyclerView(){
         // The implementation for adding a layout manager and adapter to recycler view,
         // is influenced by this site
@@ -212,12 +214,35 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    private void updateAdapterWithWords(List<Word> words){
+        adapter.setWordList(words);
+        adapter.notifyDataSetChanged();
+    }
+
+    // ########## OnClickListener implementations ##########
     private View.OnClickListener exitBtnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finishAffinity(); // Finish activities
             System.exit(0); // Terminates the process/app
             //Runtime.getRuntime().exit(0); // the same as System, but better description of method
+        }
+    };
+
+    private View.OnClickListener addBtnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Ref: https://stackoverflow.com/questions/5238491/check-if-string-contains-only-letters
+            // comment by shalamus
+            // Do note, it only checks for the english alphabet!
+            String searchWord = userSearchWord.getText().toString();
+            if (Pattern.matches("[a-zA-Z]+", searchWord) && searchWord != ""){
+                wordLearnerService.addWord(searchWord);
+            }
+            else{
+                Toast.makeText(ListActivity.this,
+                        "Search word is empty or contains non letters", Toast.LENGTH_LONG).show();
+            }
         }
     };
 
@@ -228,23 +253,25 @@ public class ListActivity extends AppCompatActivity {
             Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
 
             Word wordItem = adapter.getWordListItem(position);
-            // Updating the position on the model itself, makes it separate concern for other classes
-            // because the position is needed onActivityResult, to update the single item
-            //wordItem.setWordPosition(position);
 
-            intent.putExtra(getString(R.string.WORD_LIST_ITEM),wordItem);
+            intent.putExtra(Globals.CHOSEN_WORD,wordItem.getWord());
 
+            // TODO: Delete this prob, since we dont expect result? What about cancel?
             startActivityForResult(intent, EDIT_REQ);
         }
     };
     //endregion
 
+    // ########## Save instance state. Save words ##########
     //region Saved instance state
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        ArrayList<Word> savedInstanceStateList = new ArrayList<Word>(adapter.getWordListItems());
+        // Get Arraylist to be able to call putParcelable
+        ArrayList<Word> savedInstanceStateList = new ArrayList<>(adapter.getWordListItems());
         outState.putParcelableArrayList(getString(R.string.WORD_LIST_ARRAY),savedInstanceStateList);
     }
     //endregion
 }
+
+// Onresult??

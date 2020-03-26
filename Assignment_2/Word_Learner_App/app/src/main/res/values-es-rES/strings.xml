@@ -17,4 +17,5 @@
     <string name="wordRatingTxt">Clasificación de palabras</string>
     <string name="imgDescription">La imagen dada la palabra</string>
     <string name="notesTitle">Notas</string>
+    <string name="addBtnTxt">Add</string>
 </resources>

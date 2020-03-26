@@ -7,10 +7,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -18,10 +20,13 @@ import com.facebook.stetho.Stetho;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordRepository;
@@ -46,7 +51,7 @@ public class WordLearnerService extends Service {
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
     private WordRepository wordRepository;
-    private List<Word> allwords = new ArrayList<>();
+    private List<Word> allWords = new ArrayList<>();
     // Executor service for notification update
     private ExecutorService notificationUpdateExecutor;
     // Notification manager to send updates
@@ -78,11 +83,16 @@ public class WordLearnerService extends Service {
         Log.d(TAG, "Service is running? : " + serviceIsRunning);
     }
 
+    // TODO: Maybe delete
+    // ########## Check if service is running
+    public boolean serviceRunning(){
+        return serviceIsRunning;
+    }
+
 
 
     // ########## Binder Implementation ##########
     //region Binder implementation
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -104,24 +114,43 @@ public class WordLearnerService extends Service {
     // ########## Words operations ##########
     //region Words operations
     public List<Word> getWords(){
-        return allwords;
+        return allWords;
+    }
+
+    // To prevent call from db. Matching the Assignment drawing
+    public Word getWord(String word){
+        Word wordToReturn = null;
+        for (Word wordObj : allWords){
+            if (wordObj.getWord().equals(word)){
+                wordToReturn = wordObj;
+                // early stop
+                break;
+            }
+        }
+        return wordToReturn;
     }
 
     // Check if word is already added
     public void addWord(String word){
-        WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
-            @Override
-            public void getResult(Word wordObject) {
-                if (wordObject != null){
-                    wordRepository.addWord(wordObject);
-                    allwords.add(wordObject);
-                    broadcastTaskResult(wordObject.getWord() + " added");
+        // If word already exists don't add it
+        Word alreadyExistingWord = getWord(word.toLowerCase());
+        if (alreadyExistingWord != null){
+            broadcastTaskResult("Word (" + alreadyExistingWord.getWord() + ") already exists in the app");
+        }
+        else {
+            WordAPIHelper.getInstance().getWordFromOWLBOT(word.toLowerCase(), new OWLBOTResponseListener<Word>() {
+                @Override
+                public void getResult(Word wordObject) {
+                    if (wordObject != null) {
+                        wordRepository.addWord(wordObject);
+                        allWords.add(wordObject);
+                        broadcastTaskResult(wordObject.getWord() + " added");
+                    } else {
+                        broadcastTaskResult("Word doesn't exist");
+                    }
                 }
-                else {
-                    broadcastTaskResult("Word doesn't exist");
-                }
-            }
-        });
+            });
+        }
     }
 
     // TODO: Change to Word parameter
@@ -135,8 +164,8 @@ public class WordLearnerService extends Service {
         wordRepository.deleteWord(wordObj, new DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word word) {
-                int index = allwords.indexOf(word);
-                allwords.remove(index);
+                int index = allWords.indexOf(word);
+                allWords.remove(index);
                 broadcastTaskResult("Deleted word: " + word);
             }
         });
@@ -144,7 +173,6 @@ public class WordLearnerService extends Service {
     //endregion
 
     // TODO: See if this works
-    /*
     @Override
     public void onDestroy() {
         serviceIsRunning = false;
@@ -152,15 +180,13 @@ public class WordLearnerService extends Service {
         super.onDestroy();
     }
 
-     */
-
     // ########## Broadcast Implementation ##########
     //region Broadcast Implementation
     // send broadcast
     // Add a nullable string to send back to user as a toast
     // Ref: SMAP L5 ServicesDemo
     private void broadcastTaskResult(@Nullable String message){
-        Log.d(TAG, "WordLearnerService: Broadcasting result");
+        Log.d(TAG, "Broadcasting result");
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(Globals.BROADCAST_WORDLEARNERSERVICE);
@@ -179,15 +205,16 @@ public class WordLearnerService extends Service {
         boolean firstRun = ApplicationFirstRunChecker.getFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN);
         if(firstRun){
             Log.d(TAG, "First app run");
-            ApplicationFirstRunChecker.setFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN,false);
             addStartWordsToDb();
+            // No longer first run
+            ApplicationFirstRunChecker.setFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN,false);
         }
         else {
             wordRepository.getAllWords(new DbOperationsListener<List<Word>>() {
                 @Override
                 public void DbOperationDone(List<Word> allWordsFromDb) {
                     if (allWordsFromDb != null){
-                        allwords = allWordsFromDb;
+                        allWords = allWordsFromDb;
                         broadcastTaskResult("Got all words from Db");
                     }
                     else {
@@ -205,7 +232,7 @@ public class WordLearnerService extends Service {
                 @Override
                 public void getResult(Word wordObject) {
                     wordRepository.addWord(wordObject);
-                    allwords.add(wordObject);
+                    allWords.add(wordObject);
                     // Notify for each word added
                     broadcastTaskResult(null);
                 }
@@ -214,8 +241,8 @@ public class WordLearnerService extends Service {
     }
     //endregion
 
-    // ########## Notifications Implementation ##########
-    //region Notifications setup
+    // ########## Notifications setup and Implementation ##########
+    //region Notifications
     private void setupAndStartNotificationsInForeground(){
         notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
 
@@ -250,10 +277,8 @@ public class WordLearnerService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .build();
     }
-    //endregion
 
     // ########## Recursive Notification update implementation ##########
-    //region Recursive notification updater
     // Ref SMAP L5 ServicesDemo code
     private void recursiveUpdateNotification(){
         if (notificationUpdateExecutor == null){
@@ -263,12 +288,13 @@ public class WordLearnerService extends Service {
         notificationUpdateExecutor.submit(waitAndUpdateNotification);
     }
 
+    // Ref SMAP L5 ServicesDemo code
     private Runnable waitAndUpdateNotification = new Runnable(){
         @Override
         public void run() {
-            Log.d(TAG, "execService: called");
+            Log.d(TAG, "waitAndUpdateNotification: called");
             try {
-                Log.d(TAG, "Sleeping for 5 secs");
+                Log.d(TAG, "Sleeping for 10 secs");
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
                 Log.d(TAG, "run: did not finish, som error occurred");
@@ -276,8 +302,8 @@ public class WordLearnerService extends Service {
             }
 
             // Get an index no higher than the current size of list
-            int randWordIndex = new Random().nextInt(allwords.size());
-            Word randomWord = allwords.get(randWordIndex);
+            int randWordIndex = new Random().nextInt(allWords.size());
+            Word randomWord = allWords.get(randWordIndex);
 
             Notification updatedNotification = setupNotification("Learn this word!",
                     randomWord.getWord());

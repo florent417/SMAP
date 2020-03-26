@@ -8,10 +8,12 @@
     <string name="detailsNotes">Notes</string>
     <string name="mainTitle">My Words</string>
 
-    <string name="WORD_LIST_ITEM">wordListItem</string>
+
     <string name="WORD_LIST_ARRAY">wordListArray</string>
 
     <string name="wordRatingTxt">Word Rating</string>
     <string name="imgDescription">The image given the word</string>
     <string name="notesTitle">Notes</string>
+    <string name="addBtnTxt">Add</string>
+    <string name="searchhint">Search and add word</string>
 </resources>
