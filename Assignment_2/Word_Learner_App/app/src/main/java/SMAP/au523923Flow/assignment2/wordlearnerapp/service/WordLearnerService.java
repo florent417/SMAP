@@ -6,32 +6,24 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.facebook.stetho.Stetho;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordRepository;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationFirstRunChecker;
@@ -39,7 +31,6 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DbOperationsListener;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.OWLBOTResponseListener;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.WordAPIHelper;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.WordJsonParser;
 
 // Ref : https://developer.android.com/guide/components/bound-services
 
@@ -51,12 +42,17 @@ the system destroys the service, unless the service was also started by startSer
 // OnDestroy gets called
 public class WordLearnerService extends Service {
     private static final String TAG = "WordLearnerService";
+
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
     private WordRepository wordRepository;
     private List<Word> allwords = new ArrayList<>();
-    // Flag to signal to ListActivity that words are initialized
-    private boolean wordsReady = false;
+    // Executor service for notification update
+    private ExecutorService notificationUpdateExecutor;
+    // Notification manager to send updates
+    private NotificationManagerCompat notificationManagerCompat;
+    private static final String NOTIFICATION_CHANNEL_ID = "WordLearnerChannel";
+    private static final String NOTIFICATION_CHANNEL_NAME = "Word Learner Channel";
 
     private static boolean serviceIsRunning =  false;
 
@@ -67,7 +63,7 @@ public class WordLearnerService extends Service {
         Log.d(TAG, "onCreate: is called");
 
         enableStethos();
-        startAsForegroundService();
+        setupAndStartNotificationsInForeground();
 
         WordAPIHelper.getInstance(applicationContext);
         wordRepository = new WordRepository(applicationContext);
@@ -76,38 +72,15 @@ public class WordLearnerService extends Service {
         setupWords();
 
         serviceIsRunning = true;
+
+        recursiveUpdateNotification();
         
         Log.d(TAG, "Service is running? : " + serviceIsRunning);
     }
 
-    // To keep it running forever? or make it as a foreground service
-    // onDestroy still called when leaving listActivity
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
 
-        return START_NOT_STICKY;
-        // return START_STICKY;
-    }
 
-    public List<Word> getWords(){
-        return allwords;
-    }
-
-    // TODO: Delete this prob
-    public void getAllWordsFromDB(){
-        wordRepository.getAllWords(new DbOperationsListener<List<Word>>() {
-            @Override
-            public void DbOperationDone(List<Word> allWordsFromDb) {
-
-            }
-        });
-    }
-
-    // TODO: DELETE THIS
-    public boolean areWordsReady() {
-        return wordsReady;
-    }
-
+    // ########## Binder Implementation ##########
     //region Binder implementation
 
     @Nullable
@@ -127,6 +100,12 @@ public class WordLearnerService extends Service {
         }
     }
     //endregion
+
+    // ########## Words operations ##########
+    //region Words operations
+    public List<Word> getWords(){
+        return allwords;
+    }
 
     // Check if word is already added
     public void addWord(String word){
@@ -162,6 +141,9 @@ public class WordLearnerService extends Service {
             }
         });
     }
+    //endregion
+
+    // TODO: See if this works
     /*
     @Override
     public void onDestroy() {
@@ -172,20 +154,26 @@ public class WordLearnerService extends Service {
 
      */
 
-    //send local broadcast
+    // ########## Broadcast Implementation ##########
+    //region Broadcast Implementation
+    // send broadcast
     // Add a nullable string to send back to user as a toast
+    // Ref: SMAP L5 ServicesDemo
     private void broadcastTaskResult(@Nullable String message){
         Log.d(TAG, "WordLearnerService: Broadcasting result");
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(Globals.BROADCAST_WORDLEARNERSERVICE);
 
+        // Not all broadcasts need a message to send
         if (message != null)
             broadcastIntent.putExtra(Globals.MSG_TO_USER, message);
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
+    //endregion
 
+    // ########## Setup words and populate db if need be ##########
     //region Populate db if first run else get words
     private void setupWords(){
         boolean firstRun = ApplicationFirstRunChecker.getFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN);
@@ -226,31 +214,84 @@ public class WordLearnerService extends Service {
     }
     //endregion
 
-    //region Setup foreground service
-    private void startAsForegroundService(){
+    // ########## Notifications Implementation ##########
+    //region Notifications setup
+    private void setupAndStartNotificationsInForeground(){
+        notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+
+        setUpNotificationChannel();
+
+        Notification notification = setupNotification("Learn a new Word",
+                "Words will be displayed here");
+
+        startForeground(142, notification);
+        notificationManagerCompat.notify(142, notification);
+    }
+
+    private void setUpNotificationChannel(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) { //needed because channels are not supported on older versions
-            NotificationChannel mChannel = new NotificationChannel("WordLearnerChannel", "Word Learner Channel",
+
+            NotificationChannel mChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                    NOTIFICATION_CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT);
+
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.createNotificationChannel(mChannel);
         }
+    }
 
-        Notification notification =
-                new NotificationCompat.Builder(this, "WordLearnerChannel")
-                        .setContentTitle("Test channel")
-                        .setContentText("I am testing the foreground service")
-                        .setSmallIcon(R.mipmap.word_learner_round)
-                        //        .setContentIntent(pendingIntent)
-                        .setTicker("some ticker")
-                        .setChannelId("WordLearnerChannel")
-                        .build();
-
-        //calling Android to
-        startForeground(142, notification);
+    private Notification setupNotification(String title, String contentText){
+        return new NotificationCompat.Builder(getApplicationContext(),
+                NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(title)
+                .setContentText(contentText)
+                .setSmallIcon(R.mipmap.word_learner_round)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build();
     }
     //endregion
 
+    // ########## Recursive Notification update implementation ##########
+    //region Recursive notification updater
+    // Ref SMAP L5 ServicesDemo code
+    private void recursiveUpdateNotification(){
+        if (notificationUpdateExecutor == null){
+            notificationUpdateExecutor = Executors.newSingleThreadExecutor();
+        }
+
+        notificationUpdateExecutor.submit(waitAndUpdateNotification);
+    }
+
+    private Runnable waitAndUpdateNotification = new Runnable(){
+        @Override
+        public void run() {
+            Log.d(TAG, "execService: called");
+            try {
+                Log.d(TAG, "Sleeping for 5 secs");
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                Log.d(TAG, "run: did not finish, som error occurred");
+                e.printStackTrace();
+            }
+
+            // Get an index no higher than the current size of list
+            int randWordIndex = new Random().nextInt(allwords.size());
+            Word randomWord = allwords.get(randWordIndex);
+
+            Notification updatedNotification = setupNotification("Learn this word!",
+                    randomWord.getWord());
+
+            notificationManagerCompat.notify(142, updatedNotification);
+
+            if (serviceIsRunning){
+                recursiveUpdateNotification();
+            }
+        }
+    };
+    //endregion
+
+    // ########## Stethos implementation ##########
     //region Stethos implementation
     // From L4 persistence TheSituationRoom demo from SMAP
     //enable stethos tool for inspecting database on device / emulator through chrome
