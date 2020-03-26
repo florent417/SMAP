@@ -2,10 +2,10 @@ package SMAP.au523923Flow.assignment2.wordlearnerapp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -33,9 +34,10 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 public class DetailsActivity extends AppCompatActivity {
     private static final String TAG = "DetailsActivity";
 
+    // ############ UI variables ##########
     private ImageView wordImage;
     private TextView word, pronunciation, rating, description, notes;
-    private Button cancelBtn, editBtn;
+    private Button cancelBtn, editBtn, deleteBtn;
     // Should this be a resource?
     private final int EDIT_REQ = 1;
 
@@ -44,6 +46,9 @@ public class DetailsActivity extends AppCompatActivity {
     private WordLearnerService wordLearnerService;
     boolean boundToService = false;
 
+    // ########## Word object for detals activity ##########
+    private Word wordObj = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +56,25 @@ public class DetailsActivity extends AppCompatActivity {
 
         setupUI();
         setupServiceConn();
-        bindToWordLearnerService();
+
 
 
     }
 
+    @Override
+    protected void onStart() {
+        bindToWordLearnerService();
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        wordLearnerService = null;
+        unbindService(connection);
+        boundToService = false;
+        super.onPause();
+    }
+    /*
     @Override
     protected void onStop() {
         wordLearnerService = null;
@@ -63,6 +82,7 @@ public class DetailsActivity extends AppCompatActivity {
         boundToService = false;
         super.onStop();
     }
+    */
 
     // ########## Service functionality ##########
     //region Service functionality
@@ -112,6 +132,9 @@ public class DetailsActivity extends AppCompatActivity {
 
         cancelBtn.setOnClickListener(cancelOnClickListener);
         editBtn.setOnClickListener(editOnClickListener);
+
+        deleteBtn = findViewById(R.id.deleteBtn);
+        deleteBtn.setOnClickListener(deleteOnClickListener);
     }
 
     public void setUpDetails(){
@@ -122,7 +145,7 @@ public class DetailsActivity extends AppCompatActivity {
 
             String wordStr = intentBundle.getString(Globals.CHOSEN_WORD);
             Log.d(TAG, "setUpDetails: " + wordStr);
-            Word wordObj = wordLearnerService.getWord(wordStr);
+            wordObj = wordLearnerService.getWord(wordStr);
 
             if (wordObj != null){
                 word.setText(wordObj.getWord());
@@ -159,6 +182,16 @@ public class DetailsActivity extends AppCompatActivity {
             intentToNewActivity.putExtra(Globals.CHOSEN_WORD,dataToSend);
 
             startActivityForResult(intentToNewActivity,EDIT_REQ);
+        }
+    };
+
+    private View.OnClickListener deleteOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (wordObj != null){
+                wordLearnerService.deleteWord(wordObj);
+                finish();
+            }
         }
     };
 

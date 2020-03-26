@@ -154,18 +154,11 @@ public class WordLearnerService extends Service {
     }
 
     // TODO: Change to Word parameter
-    public void deleteWord(String word){
-        // TODO: Only test purposes, delete after testing.
-        Word wordObj = new Word();
-        wordObj.setWord(word);
-        // Does this work? dont think the objects are the same
-        // Indeed, it does not work
-        // Not a problem though since we are gonna send the actual Word to delete
-        wordRepository.deleteWord(wordObj, new DbOperationsListener<Word>() {
+    public void deleteWord(Word word){
+        wordRepository.deleteWord(word, new DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word word) {
-                int index = allWords.indexOf(word);
-                allWords.remove(index);
+                allWords.remove(word);
                 broadcastTaskResult("Deleted word: " + word);
             }
         });

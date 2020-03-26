@@ -64,10 +64,6 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        if (savedInstanceState != null){
-            wordListItems = savedInstanceState.getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
-        }
-
         startServiceAsForegroundService();
 
         initUI();
@@ -120,11 +116,9 @@ public class ListActivity extends AppCompatActivity {
                 wordLearnerService = binder.getService();
                 boundToService = true;
 
-                if (wordListItems.size() == 0){
-                    List<Word> allWords = wordLearnerService.getWords();
-                    wordListItems = allWords != null ? allWords : new ArrayList<Word>();
-                    updateAdapterWithWords(wordListItems);
-                }
+                List<Word> allWords = wordLearnerService.getWords();
+                wordListItems = allWords != null ? allWords : new ArrayList<Word>();
+                updateAdapterWithWords(wordListItems);
             }
 
             @Override
@@ -262,6 +256,7 @@ public class ListActivity extends AppCompatActivity {
     };
     //endregion
 
+    // TODO: Delete everything with parcelable
     // ########## Save instance state. Save words ##########
     //region Saved instance state
     @Override
@@ -269,7 +264,7 @@ public class ListActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         // Get Arraylist to be able to call putParcelable
         ArrayList<Word> savedInstanceStateList = new ArrayList<>(adapter.getWordListItems());
-        outState.putParcelableArrayList(getString(R.string.WORD_LIST_ARRAY),savedInstanceStateList);
+        outState.putParcelableArrayList(Globals.WORD_LIST_PARCELABLE_ARRAY,savedInstanceStateList);
     }
     //endregion
 }

@@ -18,4 +18,5 @@
     <string name="imgDescription">La imagen dada la palabra</string>
     <string name="notesTitle">Notas</string>
     <string name="addBtnTxt">Add</string>
+    <string name="deleteBtnTxt">Delete</string>
 </resources>
