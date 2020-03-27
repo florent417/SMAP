@@ -46,8 +46,6 @@ public class ListActivity extends AppCompatActivity {
     private Button exitBtn;
     private Button addBtn;
     private EditText userSearchWord;
-    // Should this be a resource?
-    private final int EDIT_REQ = 1;
 
     // ########## Words ###########
     List<Word> wordListItems = new ArrayList<>();
@@ -88,19 +86,6 @@ public class ListActivity extends AppCompatActivity {
         super.onStop();
     }
     //endregion
-
-    // ########## Service functionality and implementation ##########
-    public void startServiceAsForegroundService(){
-        // TODO: check if service is already started
-        Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(startServiceIntent);
-        }
-        else {
-            startService(startServiceIntent);
-        }
-    }
 
     // ########## Service functionality ##########
     //region Service functionality
@@ -143,6 +128,18 @@ public class ListActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(onWordLearnerBroadcastResult, filter);
     }
 
+    public void startServiceAsForegroundService(){
+        // TODO: check if service is already started
+        Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(startServiceIntent);
+        }
+        else {
+            startService(startServiceIntent);
+        }
+    }
+
     // ########## Broadcast receiver implementation ##########
     private BroadcastReceiver onWordLearnerBroadcastResult = new BroadcastReceiver() {
         @Override
@@ -168,6 +165,7 @@ public class ListActivity extends AppCompatActivity {
             updateAdapterWithWords(wordListItems);
         }
     };
+    //endregion
 
     // TODO: Delete or update
     /*
@@ -214,6 +212,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     // ########## OnClickListener implementations ##########
+    //region OnClickListener implementations
     private View.OnClickListener exitBtnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -240,7 +239,7 @@ public class ListActivity extends AppCompatActivity {
         }
     };
 
-    // Making sure the on click implementation is in activity, and not adapter
+    // Making sure that callback for onClickListener implementation is in activity, and not in adapter
     private WordListAdapter.OnItemListClickListener onItemListClickListener = new WordListAdapter.OnItemListClickListener() {
         @Override
         public void onItemListClick(int position) {
@@ -250,10 +249,11 @@ public class ListActivity extends AppCompatActivity {
 
             intent.putExtra(Globals.CHOSEN_WORD,wordItem.getWord());
 
-            // TODO: Delete this prob, since we dont expect result? What about cancel?
-            startActivityForResult(intent, EDIT_REQ);
+            startActivityForResult(intent, Globals.EDIT_REQ);
         }
     };
+    //endregion
+
     //endregion
 
     // TODO: Delete everything with parcelable

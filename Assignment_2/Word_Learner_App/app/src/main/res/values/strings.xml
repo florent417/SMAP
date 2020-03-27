@@ -14,4 +14,5 @@
     <string name="addBtnTxt">Add</string>
     <string name="searchhint">Search and add word</string>
     <string name="deleteBtnTxt">Delete</string>
+    <string name="updateBtnTxt">Update</string>
 </resources>

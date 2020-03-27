@@ -38,17 +38,17 @@ public class DetailsActivity extends AppCompatActivity {
     private ImageView wordImage;
     private TextView word, pronunciation, rating, description, notes;
     private Button cancelBtn, editBtn, deleteBtn;
-    // Should this be a resource?
-    private final int EDIT_REQ = 1;
 
     // ########## Service Binding Variables ##########
     ServiceConnection connection;
     private WordLearnerService wordLearnerService;
     boolean boundToService = false;
 
-    // ########## Word object for detals activity ##########
+    // ########## Word object for details activity ##########
     private Word wordObj = null;
 
+    // ########## Lifecycle methods ##########
+    //region Lifecycle Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +56,6 @@ public class DetailsActivity extends AppCompatActivity {
 
         setupUI();
         setupServiceConn();
-
-
-
     }
 
     @Override
@@ -68,21 +65,13 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        wordLearnerService = null;
-        unbindService(connection);
-        boundToService = false;
-        super.onPause();
-    }
-    /*
-    @Override
     protected void onStop() {
         wordLearnerService = null;
         unbindService(connection);
         boundToService = false;
         super.onStop();
     }
-    */
+    //endregion
 
     // ########## Service functionality ##########
     //region Service functionality
@@ -98,7 +87,6 @@ public class DetailsActivity extends AppCompatActivity {
                 wordLearnerService = binder.getService();
                 boundToService = true;
 
-                // TODO: implement get word
                 setUpDetails();
             }
 
@@ -118,7 +106,8 @@ public class DetailsActivity extends AppCompatActivity {
     }
     //endregion
 
-    // ########## UI Setup ##########
+    // ########## UI Setup and UI update ##########
+    //region UI Setup
     private void setupUI(){
         wordImage = findViewById(R.id.detailsWordImg);
         word = findViewById(R.id.detailsWord);
@@ -129,38 +118,40 @@ public class DetailsActivity extends AppCompatActivity {
 
         cancelBtn = findViewById(R.id.detailsCancelBtn);
         editBtn = findViewById(R.id.editBtn);
+        deleteBtn = findViewById(R.id.deleteBtn);
 
         cancelBtn.setOnClickListener(cancelOnClickListener);
         editBtn.setOnClickListener(editOnClickListener);
-
-        deleteBtn = findViewById(R.id.deleteBtn);
         deleteBtn.setOnClickListener(deleteOnClickListener);
     }
 
     public void setUpDetails(){
-        Intent intent = getIntent();
-        Bundle intentBundle = intent.getExtras();
+        // Get extras from ListActivity
+        Bundle intentBundle = getIntent().getExtras();
 
         if(intentBundle != null){
-
             String wordStr = intentBundle.getString(Globals.CHOSEN_WORD);
-            Log.d(TAG, "setUpDetails: " + wordStr);
             wordObj = wordLearnerService.getWord(wordStr);
 
             if (wordObj != null){
                 word.setText(wordObj.getWord());
                 pronunciation.setText(wordObj.getPronunciation());
                 rating.setText(wordObj.getRating());
+
+                // If notes exist, set notesViewText
                 String notesTxt = wordObj.getNotes();
                 if (notesTxt != null){
                     notes.setText(notesTxt);
                 }
+
+                // Load image with Picasso. See explanation in Adapter
                 String imageUrl = wordObj.getFirstDefinition().getImageUrl();
                 Picasso.with(DetailsActivity.this)
                         .load(imageUrl)
                         .placeholder(android.R.drawable.sym_def_app_icon)
                         .error(android.R.drawable.sym_def_app_icon)
                         .into(wordImage);
+
                 String definition = wordObj.getFirstDefinition().getDefinition();
                 if (definition != null) {
                     description.setText(definition);
@@ -168,20 +159,17 @@ public class DetailsActivity extends AppCompatActivity {
             }
         }
     }
+    //endregion
 
-
-
+    // ########## onClick implementations ##########
+    //region onClickImplementations
     private View.OnClickListener editOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View wordItemView) {
             Intent intentToNewActivity = new Intent(DetailsActivity.this, EditActivity.class);
-            Intent intentFromListActivity = getIntent();
-
-            // Send the same data object, since nothing can be changed in this activity
-            WordListItem dataToSend = intentFromListActivity.getParcelableExtra(Globals.CHOSEN_WORD);
-            intentToNewActivity.putExtra(Globals.CHOSEN_WORD,dataToSend);
-
-            startActivityForResult(intentToNewActivity,EDIT_REQ);
+            // Put the word string in the intent
+            intentToNewActivity.putExtra(Globals.CHOSEN_WORD, wordObj.getWord());
+            startActivityForResult(intentToNewActivity, Globals.EDIT_REQ);
         }
     };
 
@@ -190,6 +178,8 @@ public class DetailsActivity extends AppCompatActivity {
         public void onClick(View v) {
             if (wordObj != null){
                 wordLearnerService.deleteWord(wordObj);
+                // Not sure if this is needed, but we go back to ListActivity
+                setResult(RESULT_OK);
                 finish();
             }
         }
@@ -202,23 +192,17 @@ public class DetailsActivity extends AppCompatActivity {
             finish();
         }
     };
+    //endregion
 
-    // TODO: Delete this??
+    // ########## OnActivityResult implementation ##########
+    //region OnActivityResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // The data does not need to be set in the activity, since the updated object is going to
-        // be sent anyway from the listactivity
-        if(requestCode == EDIT_REQ && resultCode == RESULT_OK ){
-            if(data != null){
-                // pass the data on
-                setResult(RESULT_OK, data);
-                finish();
-            }
-            else{
-                // SetResult?
-                finish();
-            }
+        if(requestCode == Globals.EDIT_REQ && resultCode == RESULT_OK ){
+            setResult(RESULT_OK);
+            finish();
         }
     }
+    //endregion
 }

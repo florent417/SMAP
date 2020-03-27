@@ -10,7 +10,7 @@ public class Globals {
     public static final String IS_FIRST_RUN = "applicationIsFirstTimeRun";
     public static final String CHOSEN_WORD = "chosenWord";
     public static final String WORD_LIST_PARCELABLE_ARRAY = "wordList";
-
+    public static final int EDIT_REQ = 1;
     public static final String[] START_WORDS = {"buffalo", "camel", "cheetah",
             "crocodile", "elephant", "giraffe", "gnu", "kudo", "leopard", "lion", "oryx", "ostrich",
             "shark", "snake"};

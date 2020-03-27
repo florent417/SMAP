@@ -117,19 +117,6 @@ public class WordLearnerService extends Service {
         return allWords;
     }
 
-    // To prevent call from db. Matching the Assignment drawing
-    public Word getWord(String word){
-        Word wordToReturn = null;
-        for (Word wordObj : allWords){
-            if (wordObj.getWord().equals(word)){
-                wordToReturn = wordObj;
-                // early stop
-                break;
-            }
-        }
-        return wordToReturn;
-    }
-
     // Check if word is already added
     public void addWord(String word){
         // If word already exists don't add it
@@ -153,13 +140,39 @@ public class WordLearnerService extends Service {
         }
     }
 
-    // TODO: Change to Word parameter
+    // To prevent call from db. Matching the Assignment drawing
+    public Word getWord(String word){
+        Word wordToReturn = null;
+        for (Word wordObj : allWords){
+            if (wordObj.getWord().equals(word)){
+                wordToReturn = wordObj;
+                // early stop
+                break;
+            }
+        }
+        return wordToReturn;
+    }
+
     public void deleteWord(Word word){
         wordRepository.deleteWord(word, new DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word word) {
                 allWords.remove(word);
-                broadcastTaskResult("Deleted word: " + word);
+                broadcastTaskResult("Deleted word: " + word.getWord());
+            }
+        });
+    }
+
+    public void updateWord(Word word){
+        wordRepository.updateWord(word, new DbOperationsListener<Word>() {
+            @Override
+            public void DbOperationDone(Word updatedWord) {
+                // Since the object has been change you can't find it in the allwords
+                // unless you use getWord()
+                Word wordToGetIndex = getWord(updatedWord.getWord());
+                int i = allWords.indexOf(wordToGetIndex);
+                allWords.set(i, updatedWord);
+                broadcastTaskResult("Updated word: " + updatedWord.getWord());
             }
         });
     }

@@ -19,4 +19,5 @@
     <string name="notesTitle">Notas</string>
     <string name="addBtnTxt">Add</string>
     <string name="deleteBtnTxt">Delete</string>
+    <string name="updateBtnTxt">Update</string>
 </resources>
