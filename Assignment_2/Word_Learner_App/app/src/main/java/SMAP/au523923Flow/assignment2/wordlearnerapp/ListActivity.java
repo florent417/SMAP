@@ -1,5 +1,6 @@
 package SMAP.au523923Flow.assignment2.wordlearnerapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -124,7 +125,6 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void startServiceAsForegroundService(){
-        // TODO: check if service is already started
         boolean serviceAlreadyRunning = ApplicationRunChecker.getForegroundServiceRunning(getApplicationContext(),
                 Globals.WORD_LEARNER_SERVICE_RUNNING);
 
@@ -245,6 +245,12 @@ public class ListActivity extends AppCompatActivity {
     //endregion
 
     //endregion
+
+    // TODO: Don't think it is needed
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
 
 // Onresult??

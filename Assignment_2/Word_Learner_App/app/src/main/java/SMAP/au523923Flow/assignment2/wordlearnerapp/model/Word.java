@@ -20,11 +20,15 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 // Extracted with: http://www.jsonschema2pojo.org/
+// Parcelable makes it possible to send objects to other activities, and save that object
+// for e.g. when the user flips the screen.
+// Parcelable implementation influenced by
+// https://stackoverflow.com/questions/7181526/how-can-i-make-my-custom-objects-parcelable
+// and (Some comments in the code from the post are copied here as well)
+// https://dzone.com/articles/using-android-parcel
 @Entity (tableName = "word")
 public class Word implements Parcelable {
-
-    //@PrimaryKey(autoGenerate = true)
-    //public int wordId;
+    // No need to save to db, hence Ignore annotation
     @Ignore
     private float MIN_RATING = 0.00f, MAX_RATING = 10.00f;
 
@@ -33,6 +37,7 @@ public class Word implements Parcelable {
         notes = "";
     }
 
+    // Primary usage: EditActivity, when flipping the screen
     public Word (Word otherWord){
         this.word = otherWord.getWord();
         this.definitions = otherWord.getDefinitions();
@@ -41,7 +46,8 @@ public class Word implements Parcelable {
         this.notes = otherWord.getNotes();
     }
 
-    //@Ignore
+    // ########## Database variables and database annotations ##########
+    //region variables and database annotations
     @SerializedName("definitions")
     @Expose
     private List<Definition> definitions;
@@ -58,16 +64,16 @@ public class Word implements Parcelable {
     @Expose
     private String pronunciation;
 
-    //@ColumnInfo(name = "definition")
-    // Does this work?
-    //@Embedded
-    //private Definition firstDefinition;
     @ColumnInfo(name = "rating")
     private String rating;
     @ColumnInfo(name = "notes")
     private String notes;
+    //endregion
 
+    // ########## Getters and setters ##########
     //region Getters and setters
+    // To be able to save the definitions to db
+    // see ref in DefinitionConverter
     @TypeConverters(DefinitionConverter.class)
     public List<Definition> getDefinitions() {
         return definitions;
@@ -102,11 +108,10 @@ public class Word implements Parcelable {
     public String getNotes (){return notes;}
 
     public void setNotes(String notes) {this.notes = notes;}
-
     //endregion
 
+    // ########## Parcel and Parcelable implementation ##########
     //region Parcel and Parcelable implementation
-    // Not needed to implement
     @Override
     public int describeContents() {
         return 0;
@@ -114,7 +119,6 @@ public class Word implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        // Have no idea if this works
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             dest.writeParcelableList(definitions,flags);
         }
@@ -123,11 +127,8 @@ public class Word implements Parcelable {
         }
         dest.writeString(word);
         dest.writeString(pronunciation);
-        //dest.writeParcelable(firstDefinition, flags);
         dest.writeString(rating);
         dest.writeString(notes);
-        //dest.writeInt(imgResNbr);
-        //dest.writeInt(wordPosition);
     }
 
     /** Static field used to regenerate object, individually or as arrays */
@@ -150,11 +151,8 @@ public class Word implements Parcelable {
         }
         word = pc.readString();
         pronunciation = pc.readString();
-        //firstDefinition = pc.readParcelable(Definition.class.getClassLoader());
         rating = pc.readString();
         notes = pc.readString();
-        //imgResNbr = pc.readInt();
-        //wordPosition = pc.readInt();
     }
     //endregion
 

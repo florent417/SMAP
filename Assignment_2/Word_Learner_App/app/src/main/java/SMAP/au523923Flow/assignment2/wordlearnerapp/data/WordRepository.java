@@ -13,20 +13,23 @@ import java.util.concurrent.ExecutionException;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DbOperationsListener;
 
-// The mindset behind making the repository and teh callback flow
-// is fist of all to separate functionality, so async tasks to the
-// db is done here. The callback flow is added to control what happens
-// in the service, so it is possible to call e.g. broadcast functions
-// only when the operations are done, and also to check if the
-// operations were actually executed and handle it in the service if
-// they weren't executed and e.g. null object is returned.
+// The mindset behind making the repository and the callback flow
+// is first of all to separate functionality, so async tasks implementations to the
+// db are implemented here, instead of being implemented in the service.
+// The callback flow is added to control what happens in the service, so it is
+// possible to call e.g. broadcast functions only when the operations are done,
+// and also to check if the operations were actually executed and handle it in the
+// service if they weren't executed and e.g. null object is returned.
 
 // Inspired by :
 // https://codinginflow.com/tutorials/android/room-viewmodel-livedata-recyclerview-mvvm/part-4-repository
 public class WordRepository {
-    private WordDAO wordDAO;
     private static final String TAG = "WordRepository";
 
+    private WordDAO wordDAO;
+
+    // ########## Async task executors ##########
+    //region Async task executors
     public WordRepository(Context context){
         WordLearnerDatabase wordLearnerDatabase = WordLearnerDatabase.getWordDbInstance(context);
         wordDAO = wordLearnerDatabase.wordDAO();
@@ -40,45 +43,31 @@ public class WordRepository {
     public void getWord(String word, DbOperationsListener<Word> listener) {
         GetWordAsyncTask getWordAsyncTask = new GetWordAsyncTask(wordDAO, listener);
         getWordAsyncTask.execute(word);
-        /*
-        try {
-            return getWordAsyncTask.execute(word).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-
-         */
     }
 
     public void addWord(Word word){
         AddWordAsyncTask addWordAsyncTask = new AddWordAsyncTask(wordDAO);
-
         addWordAsyncTask.execute(word);
     }
 
     public void deleteWord(Word word, DbOperationsListener<Word> listener){
         DeleteWordAsyncTask deleteWordAsyncTask = new DeleteWordAsyncTask(wordDAO, listener, word);
-
         deleteWordAsyncTask.execute(word);
     }
 
     public void updateWord(Word word, DbOperationsListener<Word> listener){
         UpdateWordAsyncTask updateWordAsyncTask = new UpdateWordAsyncTask(wordDAO, listener);
-
         updateWordAsyncTask.execute(word);
     }
 
     public void addWords(List<Word> words, DbOperationsListener<List<Word>> listener){
         AddWordsAsyncTask addWordsAsyncTask = new AddWordsAsyncTask(wordDAO, listener);
-
         addWordsAsyncTask.execute(words);
     }
+    //endregion
 
+    // ########## Asynctasks implementations ##########
     //region AsyncTasks
-
     private class GetAllWordsAsyncTask extends AsyncTask<Void, Void, List<Word>> {
         private WordDAO wordDAO;
         private DbOperationsListener<List<Word>> listener;
@@ -98,6 +87,8 @@ public class WordRepository {
             return null;
         }
 
+        // Execute when db operations are done. This applies for most of the async task
+        // implementations in this file
         @Override
         protected void onPostExecute(List<Word> words) {
             listener.DbOperationDone(words);
@@ -146,8 +137,9 @@ public class WordRepository {
             }
             return null;
         }
+
         // Since the listener is implemented in the api helper
-        // it is not necessary to implement it here as well
+        // it is not necessary to implement it here
     }
 
     private class DeleteWordAsyncTask extends AsyncTask<Word, Void, Word> {
@@ -233,6 +225,5 @@ public class WordRepository {
             listener.DbOperationDone(words);
         }
     }
-
     //endregion
 }

@@ -31,44 +31,43 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.OWLBOTResponseListener;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.WordAPIHelper;
 
-// Ref : https://developer.android.com/guide/components/bound-services
-
-/*
-When the last client unbinds from the service,
-the system destroys the service, unless the service was also started by startService().
-*/
-
-// OnDestroy gets called
 public class WordLearnerService extends Service {
     private static final String TAG = "WordLearnerService";
 
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
+
+    // For db operations and allWords existing in db
     private WordRepository wordRepository;
     private List<Word> allWords = new ArrayList<>();
+
     // Executor service for notification update
     private ExecutorService notificationUpdateExecutor;
+
     // Notification manager to send updates
     private NotificationManagerCompat notificationManagerCompat;
     private static final String NOTIFICATION_CHANNEL_ID = "WordLearnerChannel";
     private static final String NOTIFICATION_CHANNEL_NAME = "Word Learner Channel";
+
     private static final int NOTIFICATION_ID = 1;
 
     private static boolean serviceIsRunning =  false;
 
+    // ########## Lifecycle methods ##########
+    //region Lifecycle methods
     @Override
     public void onCreate() {
         super.onCreate();
-        Context applicationContext = getApplicationContext();
         Log.d(TAG, "onCreate: is called");
         enableStethos();
 
         setupAndStartNotificationsInForeground();
 
-        WordAPIHelper.getInstance(applicationContext);
-        wordRepository = new WordRepository(applicationContext);
+        // Setup wordAPIHelper and repository
+        WordAPIHelper.getInstance(getApplicationContext());
+        wordRepository = new WordRepository(getApplicationContext());
 
-        // To check database and check for first run of app
+        // To check database for words and check for first run of app
         setupWords();
 
         serviceIsRunning = true;
@@ -88,10 +87,13 @@ public class WordLearnerService extends Service {
                 Globals.WORD_LEARNER_SERVICE_RUNNING, false);
         super.onDestroy();
     }
+    //endregion
 
     // ########## Binder Implementation ##########
     //region Binder implementation
-    // TODO: Find reference
+
+    // Ref: https://developer.android.com/guide/components/bound-services
+    // Comments also copied from reference
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -196,7 +198,7 @@ public class WordLearnerService extends Service {
     //endregion
 
     // ########## Setup words and populate db if need be ##########
-    //region Populate db if first run else get words
+    //region Populate db if first run else get words from db
     private void setupWords(){
         boolean appFirstRun = ApplicationRunChecker.getFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN);
         if(appFirstRun){
@@ -235,7 +237,7 @@ public class WordLearnerService extends Service {
             });
         }
     }
-    //endregion
+    //endregion for d
 
     // ########## Notifications setup and Implementation ##########
     //region Notifications

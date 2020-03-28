@@ -51,7 +51,6 @@ public class WordAPIHelper {
     }
 
     public void getWordFromOWLBOT(String word, final OWLBOTResponseListener<Word> listener){
-        // Test word
         String url = Globals.OWLBOT_API_CALL + word;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,

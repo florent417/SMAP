@@ -25,7 +25,7 @@ public class ApplicationRunChecker {
 
     public static boolean getForegroundServiceRunning(Context context, String key) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        // Set default service running to false
+        // Set default serviceRunning to false
         return sp.getBoolean(key, false);
     }
 }

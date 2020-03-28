@@ -15,6 +15,7 @@ public interface WordDAO {
     @Query("SELECT * FROM word")
     List<Word> getAllWords();
 
+    // :word is the parameter
     @Query("SELECT * FROM word WHERE word LIKE :word LIMIT 1")
     Word getWord(String word);
 

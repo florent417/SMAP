@@ -18,22 +18,25 @@ import java.util.List;
 // The idea on how to implement adapter with recycler view is influenced by this playlist on YT
 // https://www.youtube.com/watch?v=5T144CbTwjc&list=PLk7v1Z2rk4hjHrGKo9GqOtLs1e2bglHHA&index=2&fbclid=IwAR16HBg3NMwz2uDT9gbiUgP6QquDEVK5S1UEx3nz49kTvtU_Wisl9XpowUc*/
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHolder> {
+    private String TAG = "WordListAdapter";
+
     private List<Word> wordListItems;
     private Context context;
+
+    // The implementation on onClickListeners with adapters and RecyclerViews is influenced by:
+    // https://www.youtube.com/watch?v=WtLZK1kh-yM
     private OnItemListClickListener mOnItemListClick;
-    private String TAG = "WordListAdapter";
+    public interface OnItemListClickListener {
+        void onItemListClick(int position);
+    }
 
     WordListAdapter(Context context, List<Word> wordListItems) {
         this.wordListItems = wordListItems;
         this.context = context;
     }
 
-    // The implementation on onClickListeners with adapters and RecycleViews is influenced by:
-    // https://www.youtube.com/watch?v=WtLZK1kh-yM
-    public interface OnItemListClickListener {
-        void onItemListClick(int position);
-    }
-    
+    // ########## Getters and setters ##########
+    //region Getters and Setters
     void setOnItemListClickListener(OnItemListClickListener itemListClickListener){
         mOnItemListClick = itemListClickListener;
     }
@@ -46,6 +49,12 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         Log.d(TAG, "Adapter: WordList updated");
         wordListItems = wordList;
     }
+
+    @Override
+    public int getItemCount() {
+        return wordListItems.size();
+    }
+    //endregion
 
     @NonNull
     @Override
@@ -78,11 +87,8 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
                 .into(holder.imgView);
     }
 
-    @Override
-    public int getItemCount() {
-        return wordListItems.size();
-    }
-
+    // ########## ViewHolder implementation ##########
+    //region ViewHolder implementation
     class ViewHolder extends RecyclerView.ViewHolder{
         private TextView word, pronunciation, wordRating;
         private ImageView imgView;
@@ -110,4 +116,5 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
             }
         };
     }
+    //endregion
 }

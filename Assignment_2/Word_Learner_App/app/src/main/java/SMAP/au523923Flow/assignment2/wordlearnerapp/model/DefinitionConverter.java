@@ -29,7 +29,6 @@ public class DefinitionConverter {
     public List<Definition> toDefinitionList(String definitionsListStr){
         if (definitionsListStr == null){
             return Collections.emptyList();
-            // return null;
         }
 
         Gson gson = new Gson();
@@ -37,30 +36,4 @@ public class DefinitionConverter {
         List<Definition> definitionList = gson.fromJson(definitionsListStr, type);
         return definitionList;
     }
-    /*
-    // Maybe i dont need this
-    @TypeConverter
-    public String fromDefinition(Definition definition){
-        if (definition == null){
-            return null;
-        }
-
-        Gson gson = new Gson();
-        Type type = new TypeToken<Definition>(){}.getType();
-        String json = gson.toJson(definition,type);
-        return json;
-    }
-
-    @TypeConverter
-    public Definition toDefinition (String definitionStr){
-        if (definitionStr == null){
-            return null;
-        }
-
-        Gson gson = new Gson();
-        Type type = new TypeToken<Definition>(){}.getType();
-        Definition definition = gson.fromJson(definitionStr, type);
-        return definition;
-    }
-    */
 }
