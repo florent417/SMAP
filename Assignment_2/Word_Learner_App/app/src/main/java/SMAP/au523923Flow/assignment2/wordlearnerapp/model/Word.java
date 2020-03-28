@@ -33,6 +33,14 @@ public class Word implements Parcelable {
         notes = "";
     }
 
+    public Word (Word otherWord){
+        this.word = otherWord.getWord();
+        this.definitions = otherWord.getDefinitions();
+        this.pronunciation = otherWord.getPronunciation();
+        this.rating = otherWord.getRating();
+        this.notes = otherWord.getNotes();
+    }
+
     //@Ignore
     @SerializedName("definitions")
     @Expose
@@ -59,9 +67,6 @@ public class Word implements Parcelable {
     @ColumnInfo(name = "notes")
     private String notes;
 
-    @Ignore
-    private Definition definition;
-
     //region Getters and setters
     @TypeConverters(DefinitionConverter.class)
     public List<Definition> getDefinitions() {
@@ -72,22 +77,7 @@ public class Word implements Parcelable {
         this.definitions = definitions;
     }
 
-    //@TypeConverters(DefinitionConverter.class)
-    //public Definition getFirstDefinition() {return firstDefinition;}
     public Definition getFirstDefinition() {return definitions.get(0);}
-
-    public Definition getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition() {
-        if (!definitions.isEmpty() && definitions != null)
-            definition = definitions.get(0);
-    }
-
-    //public void setFirstDefinition(){firstDefinition = definitions.get(0);}
-
-    //public void setFirstDefinition(Definition firstDefinition) { this.firstDefinition = firstDefinition; }
 
     public String getWord() {
         return word;

@@ -1,5 +1,6 @@
 package SMAP.au523923Flow.assignment2.wordlearnerapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ComponentName;
@@ -32,7 +33,9 @@ public class EditActivity extends AppCompatActivity {
     boolean boundToService = false;
 
     // ########## Word object for details activity ##########
-    private Word wordObj = null;
+    private Word wordObj;
+
+    private Bundle savedInstance;
 
     // ########## Lifecycle methods ##########
     //region Lifecycle methods
@@ -40,6 +43,7 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        savedInstance = savedInstanceState;
 
         setupUI();
         setupServiceConn();
@@ -101,7 +105,6 @@ public class EditActivity extends AppCompatActivity {
         wordRating = findViewById(R.id.editWordRating);
         rater = findViewById(R.id.wordRater);
         wordNotes = findViewById(R.id.notesInput);
-
         cancelBtn = findViewById(R.id.editCancelBtn);
         updateBtn = findViewById(R.id.updateBtn);
 
@@ -112,12 +115,20 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void updateUI(){
-        Bundle extras = getIntent().getExtras();
+        // See if wordObj is saved in savedInstance
+        if(savedInstance != null){
+            wordObj = savedInstance.getParcelable("Something");
+        }
 
-        if(extras != null){
-            String word = extras.getString(Globals.CHOSEN_WORD);
-            wordObj = wordLearnerService.getWord(word);
-            if (wordObj != null){
+        // Get it from DetailsActivity if not in savedInstance
+        if (wordObj == null) {
+            Bundle extras = getIntent().getExtras();
+
+            if (extras != null) {
+                String word = extras.getString(Globals.CHOSEN_WORD);
+                Word wordLearnerServiceWord = wordLearnerService.getWord(word);
+                wordObj = new Word(wordLearnerServiceWord);
+
                 wordName.setText(wordObj.getWord());
                 wordRating.setText(wordObj.getRating());
                 String ratingStrVal = wordRating.getText().toString();
@@ -184,5 +195,15 @@ public class EditActivity extends AppCompatActivity {
     };
     //endregion
 
+    //endregion
+
+    // ########## Save instance state ##########
+    //region Save instance state
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Only save the object, updating on the object is done when we send it
+        outState.putParcelable("Something", wordObj);
+    }
     //endregion
 }
