@@ -246,11 +246,9 @@ public class ListActivity extends AppCompatActivity {
 
     //endregion
 
-    // TODO: Don't think it is needed
+    // TODO: Don't think this is needed
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
-
-// Onresult??
