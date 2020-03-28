@@ -130,6 +130,7 @@ public class ListActivity extends AppCompatActivity {
 
         // Only start foreground service if its not running
         if (!serviceAlreadyRunning) {
+            Log.d(TAG, "Starting word learner service as foreground service");
             Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

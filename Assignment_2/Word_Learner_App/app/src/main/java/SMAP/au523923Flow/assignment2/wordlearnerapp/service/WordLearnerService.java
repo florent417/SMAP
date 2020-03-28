@@ -112,8 +112,8 @@ public class WordLearnerService extends Service {
     }
     //endregion
 
-    // ########## Words operations ##########
-    //region Words operations
+    // ########## Word operations ##########
+    //region Word operations
     public List<Word> getAllWords(){
         return allWords;
     }
@@ -122,7 +122,7 @@ public class WordLearnerService extends Service {
         // If word already exists don't add it
         Word alreadyExistingWord = getWord(word.toLowerCase());
         if (alreadyExistingWord != null){
-            broadcastTaskResult("Word (" + alreadyExistingWord.getWord() + ") already exists in the app");
+            broadcastTaskResult("Word: " + alreadyExistingWord.getWord() + " already exists in the app");
         }
         else {
             WordAPIHelper.getInstance().getWordFromOWLBOT(word.toLowerCase(), new OWLBOTResponseListener<Word>() {
@@ -150,15 +150,17 @@ public class WordLearnerService extends Service {
                 break;
             }
         }
+        Log.d(TAG, "getWord: word found?: " + (wordToReturn != null));
         return wordToReturn;
     }
 
     public void deleteWord(Word word){
         wordRepository.deleteWord(word, new DbOperationsListener<Word>() {
             @Override
-            public void DbOperationDone(Word word) {
-                allWords.remove(word);
-                broadcastTaskResult("Deleted word: " + word.getWord());
+            public void DbOperationDone(Word deletedWord) {
+                Log.d(TAG, "DbOperation delete response: word deleted: " + deletedWord.getWord());
+                allWords.remove(deletedWord);
+                broadcastTaskResult("Deleted word: " + deletedWord.getWord());
             }
         });
     }
@@ -167,6 +169,7 @@ public class WordLearnerService extends Service {
         wordRepository.updateWord(word, new DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word updatedWord) {
+                Log.d(TAG, "DbOperation update response: word updated: " + updatedWord.getWord());
                 // Since the object has been changed you can't find it in allWords variable
                 // unless you use getWord(String word)
                 Word wordToGetIndex = getWord(updatedWord.getWord());
@@ -211,7 +214,7 @@ public class WordLearnerService extends Service {
             wordRepository.getAllWords(new DbOperationsListener<List<Word>>() {
                 @Override
                 public void DbOperationDone(List<Word> allWordsFromDb) {
-                    if (allWordsFromDb != null){
+                    if (allWordsFromDb != null && allWordsFromDb.size() != 0){
                         allWords = allWordsFromDb;
                         broadcastTaskResult("Got all words from Db");
                     }
@@ -237,7 +240,7 @@ public class WordLearnerService extends Service {
             });
         }
     }
-    //endregion for d
+    //endregion
 
     // ########## Notifications setup and Implementation ##########
     //region Notifications
@@ -299,12 +302,19 @@ public class WordLearnerService extends Service {
                 e.printStackTrace();
             }
 
+            Notification updatedNotification;
             // Get an index no higher than the current size of the allWords list
-            int randWordIndex = new Random().nextInt(allWords.size());
-            Word randomWord = allWords.get(randWordIndex);
+            if (allWords.size() != 0) {
+                int randWordIndex = new Random().nextInt(allWords.size());
+                Word randomWord = allWords.get(randWordIndex);
 
-            Notification updatedNotification = setupNotification("New word to learn!",
-                    randomWord.getWord());
+                updatedNotification = setupNotification("New word to learn!",
+                        randomWord.getWord());
+            }
+            else {
+                updatedNotification = setupNotification("No words to learn",
+                        "No words exist in your app!");
+            }
 
             notificationManagerCompat.notify(NOTIFICATION_ID, updatedNotification);
 

@@ -68,7 +68,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="32dp"
         android:ems="10"
-        android:hint="@string/searchhint"
+        android:hint="@string/searchHint"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/addBtn"
         app:layout_constraintEnd_toEndOf="parent" />

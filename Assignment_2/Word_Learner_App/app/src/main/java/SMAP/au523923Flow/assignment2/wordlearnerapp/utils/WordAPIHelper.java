@@ -1,6 +1,7 @@
 package SMAP.au523923Flow.assignment2.wordlearnerapp.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -25,6 +26,8 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 // Inspired by and some comments copied from: (see comment from TommySM)
 // https://stackoverflow.com/questions/28172496/android-volley-how-to-isolate-requests-in-another-class
 public class WordAPIHelper {
+    private static final String TAG = "WordAPIHelper";
+
     private static WordAPIHelper instance;
     public RequestQueue requestQueue;
 
@@ -58,6 +61,7 @@ public class WordAPIHelper {
                     @Override
                     public void onResponse(JSONObject response) {
                         Word wordObj = WordJsonParser.parseWordJsonWithGson(response.toString());
+                        Log.d(TAG, "onResponse: API call succeded and got word: " + wordObj.getWord());
                         listener.getResult(wordObj);
                     }
                 },

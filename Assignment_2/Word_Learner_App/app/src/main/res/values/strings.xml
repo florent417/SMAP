@@ -12,7 +12,7 @@
     <string name="imgDescription">The image given the word</string>
     <string name="notesTitle">Notes</string>
     <string name="addBtnTxt">Add</string>
-    <string name="searchhint">Search and add word</string>
+    <string name="searchHint">Search and add words</string>
     <string name="deleteBtnTxt">Delete</string>
     <string name="updateBtnTxt">Update</string>
 </resources>
