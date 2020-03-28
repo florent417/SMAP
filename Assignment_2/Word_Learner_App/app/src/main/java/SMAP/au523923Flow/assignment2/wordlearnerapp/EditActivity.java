@@ -37,6 +37,8 @@ public class EditActivity extends AppCompatActivity {
 
     private Bundle savedInstance;
 
+    private final String PARCELABLE_KEY = "parcelableWordObject";
+
     // ########## Lifecycle methods ##########
     //region Lifecycle methods
     @Override
@@ -101,8 +103,8 @@ public class EditActivity extends AppCompatActivity {
     // ########## UI setup and implementation ##########
     //region UI setup and implementation
     private void setupUI(){
-        wordName = findViewById(R.id.editWord);
         wordRating = findViewById(R.id.editWordRating);
+        wordName = findViewById(R.id.editWord);
         rater = findViewById(R.id.wordRater);
         wordNotes = findViewById(R.id.notesInput);
         cancelBtn = findViewById(R.id.editCancelBtn);
@@ -117,7 +119,11 @@ public class EditActivity extends AppCompatActivity {
     private void updateUI(){
         // See if wordObj is saved in savedInstance
         if(savedInstance != null){
-            wordObj = savedInstance.getParcelable("Something");
+            wordObj = savedInstance.getParcelable(PARCELABLE_KEY);
+            // For some odd reason the text (word) does not get saved when flipped
+            // although all content in the other views are saved. Therefore we
+            // set it manually each time.
+            wordName.setText(wordObj.getWord());
         }
 
         // Get it from DetailsActivity if not in savedInstance
@@ -203,7 +209,7 @@ public class EditActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Only save the object, updating on the object is done when we send it
-        outState.putParcelable("Something", wordObj);
+        outState.putParcelable(PARCELABLE_KEY, wordObj);
     }
     //endregion
 }
