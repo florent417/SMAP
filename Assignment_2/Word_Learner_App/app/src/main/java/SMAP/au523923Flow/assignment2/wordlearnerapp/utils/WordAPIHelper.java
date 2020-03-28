@@ -54,7 +54,7 @@ public class WordAPIHelper {
         // Test word
         String url = Globals.OWLBOT_API_CALL + word;
 
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -71,17 +71,16 @@ public class WordAPIHelper {
                         }
                     }
                 })
+                // Set header for authorization
                 {
                     @Override
                     public Map<String, String> getHeaders() {
-                        //return super.getHeaders();
                         Map<String, String> params = new HashMap<>();
                         params.put(Globals.OWLBOT_HEADER_AUTH_KEY, Globals.OWLBOT_HEADER_AUTH_VAL);
-                        //params.put("Content-type", "application/json;charset=UTF-8");
                         return params;
                     }
                 };
 
-        requestQueue.add(stringRequest);
+        requestQueue.add(jsonObjectRequest);
     }
 }

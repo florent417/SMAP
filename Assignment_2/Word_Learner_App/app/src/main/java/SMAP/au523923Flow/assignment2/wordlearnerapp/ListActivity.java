@@ -1,6 +1,5 @@
 package SMAP.au523923Flow.assignment2.wordlearnerapp;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -22,13 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordLearnerDatabase;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService.LocalBinder;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationFirstRunChecker;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DataHelper;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationRunChecker;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 
 import java.util.ArrayList;
@@ -69,7 +64,7 @@ public class ListActivity extends AppCompatActivity {
         setupServiceConn();
     }
 
-    // Safest way
+    // Works best if the methods run on start. Gives a little delay to be able to connect
     @Override
     protected void onStart() {
         registerBroadcastWordsUpdateListener();
@@ -101,7 +96,7 @@ public class ListActivity extends AppCompatActivity {
                 wordLearnerService = binder.getService();
                 boundToService = true;
 
-                List<Word> allWords = wordLearnerService.getWords();
+                List<Word> allWords = wordLearnerService.getAllWords();
                 wordListItems = allWords != null ? allWords : new ArrayList<Word>();
                 updateAdapterWithWords(wordListItems);
             }
@@ -130,13 +125,22 @@ public class ListActivity extends AppCompatActivity {
 
     public void startServiceAsForegroundService(){
         // TODO: check if service is already started
-        Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
+        boolean serviceAlreadyRunning = ApplicationRunChecker.getForegroundServiceRunning(getApplicationContext(),
+                Globals.WORD_LEARNER_SERVICE_RUNNING);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(startServiceIntent);
-        }
-        else {
-            startService(startServiceIntent);
+        // Only start foreground service if its not running
+        if (!serviceAlreadyRunning) {
+            Intent startServiceIntent = new Intent(ListActivity.this, WordLearnerService.class);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(startServiceIntent);
+            } else {
+                startService(startServiceIntent);
+            }
+
+            // Set to true when it is set to run as a foreground service
+            ApplicationRunChecker.setForegroundServiceRunning(getApplicationContext(),
+                    Globals.WORD_LEARNER_SERVICE_RUNNING, true);
         }
     }
 
@@ -144,7 +148,7 @@ public class ListActivity extends AppCompatActivity {
     private BroadcastReceiver onWordLearnerBroadcastResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            List<Word> allWords = wordLearnerService.getWords();
+            List<Word> allWords = wordLearnerService.getAllWords();
 
             if (allWords == null) {
                 Log.d(TAG, "Failed to get wordListItems. Reason: Null reference ");
@@ -166,20 +170,6 @@ public class ListActivity extends AppCompatActivity {
         }
     };
     //endregion
-
-    // TODO: Delete or update
-    /*
-    private List<Word> initWordListData(Bundle savedInstanceState){
-        if (savedInstanceState != null)
-            return savedInstanceState
-                    .getParcelableArrayList(getString(R.string.WORD_LIST_ARRAY));
-        else{
-            //DataHelper data = new DataHelper(this);
-            return wordLearnerService.getAllWordsFromDB();
-        }
-    }
-
-     */
 
     // ########## UI Implementation and functionality ##########
     //region UI
@@ -254,18 +244,6 @@ public class ListActivity extends AppCompatActivity {
     };
     //endregion
 
-    //endregion
-
-    // TODO: Delete everything with parcelable
-    // ########## Save instance state. Save words ##########
-    //region Saved instance state
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Get Arraylist to be able to call putParcelable
-        ArrayList<Word> savedInstanceStateList = new ArrayList<>(adapter.getWordListItems());
-        outState.putParcelableArrayList(Globals.WORD_LIST_PARCELABLE_ARRAY,savedInstanceStateList);
-    }
     //endregion
 }
 

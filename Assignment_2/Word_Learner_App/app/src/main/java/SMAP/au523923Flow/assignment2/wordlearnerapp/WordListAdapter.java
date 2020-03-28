@@ -1,8 +1,5 @@
 package SMAP.au523923Flow.assignment2.wordlearnerapp;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 // The idea on how to implement adapter with recycler view is influenced by this playlist on YT
 // https://www.youtube.com/watch?v=5T144CbTwjc&list=PLk7v1Z2rk4hjHrGKo9GqOtLs1e2bglHHA&index=2&fbclid=IwAR16HBg3NMwz2uDT9gbiUgP6QquDEVK5S1UEx3nz49kTvtU_Wisl9XpowUc*/
@@ -38,7 +28,7 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         this.context = context;
     }
 
-    // The implementation on onclicklisteners with adapters and recycleviews is influenced by:
+    // The implementation on onClickListeners with adapters and RecycleViews is influenced by:
     // https://www.youtube.com/watch?v=WtLZK1kh-yM
     public interface OnItemListClickListener {
         void onItemListClick(int position);
@@ -48,22 +38,13 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         mOnItemListClick = itemListClickListener;
     }
 
-    
-
     Word getWordListItem(int position){
         return wordListItems.get(position);
     }
-    void updateWordListItem(int position, Word wordItem){
-        wordListItems.set(position,wordItem);
-    }
 
-    public void setWordList(List<Word> wordlist) {
-        Log.d(TAG, "Adapter: Wordlist updated");
-        wordListItems = wordlist;
-    }
-
-    List<Word> getWordListItems() {
-        return wordListItems;
+    void setWordList(List<Word> wordList) {
+        Log.d(TAG, "Adapter: WordList updated");
+        wordListItems = wordList;
     }
 
     @NonNull
@@ -84,12 +65,12 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         holder.wordRating.setText(wordListItem.getRating());
         // Get img url to set img in ImageView
         String imageUrl = wordListItem.getFirstDefinition().getImageUrl();
-        // By calling load with Picasso, it gets executed asynchronously
-        // and the ImageView gets the image after it gets loaded
-        // If an error occurs or there is no imageurl, the image is set to a default drawable.
+        // By calling load() with Picasso, it gets executed asynchronously
+        // and the ImageView gets the image after it gets loaded.
+        // If an error occurs or there is no imageURL, the image is set to a default drawable.
         // The images get cached as well so its not necessary to get the images from the url
         // all the time
-        // see : https://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library
+        // Ref : https://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library
         Picasso.with(context)
                 .load(imageUrl)
                 .placeholder(android.R.drawable.sym_def_app_icon)
@@ -102,11 +83,11 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         return wordListItems.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
         private TextView word, pronunciation, wordRating;
         private ImageView imgView;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             word = itemView.findViewById(R.id.word);

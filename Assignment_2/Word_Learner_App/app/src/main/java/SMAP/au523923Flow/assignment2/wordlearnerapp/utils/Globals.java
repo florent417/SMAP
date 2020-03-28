@@ -8,6 +8,7 @@ public class Globals {
     public static final String MSG_TO_USER = "Message to user";
     public static final String DATABASE_NAME = "Word-Learner_Database";
     public static final String IS_FIRST_RUN = "applicationIsFirstTimeRun";
+    public static final String WORD_LEARNER_SERVICE_RUNNING = "wordLearnerServiceForegroundRunning";
     public static final String CHOSEN_WORD = "chosenWord";
     public static final String WORD_LIST_PARCELABLE_ARRAY = "wordList";
     public static final int EDIT_REQ = 1;

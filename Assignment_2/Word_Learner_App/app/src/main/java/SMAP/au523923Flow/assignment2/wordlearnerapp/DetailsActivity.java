@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -14,15 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.model.WordListItem;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 

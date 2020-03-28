@@ -7,31 +7,25 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.facebook.stetho.Stetho;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Predicate;
 
 import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordRepository;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationFirstRunChecker;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationRunChecker;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DbOperationsListener;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.OWLBOTResponseListener;
@@ -58,6 +52,7 @@ public class WordLearnerService extends Service {
     private NotificationManagerCompat notificationManagerCompat;
     private static final String NOTIFICATION_CHANNEL_ID = "WordLearnerChannel";
     private static final String NOTIFICATION_CHANNEL_NAME = "Word Learner Channel";
+    private static final int NOTIFICATION_ID = 1;
 
     private static boolean serviceIsRunning =  false;
 
@@ -66,8 +61,8 @@ public class WordLearnerService extends Service {
         super.onCreate();
         Context applicationContext = getApplicationContext();
         Log.d(TAG, "onCreate: is called");
-
         enableStethos();
+
         setupAndStartNotificationsInForeground();
 
         WordAPIHelper.getInstance(applicationContext);
@@ -83,16 +78,20 @@ public class WordLearnerService extends Service {
         Log.d(TAG, "Service is running? : " + serviceIsRunning);
     }
 
-    // TODO: Maybe delete
-    // ########## Check if service is running
-    public boolean serviceRunning(){
-        return serviceIsRunning;
+    @Override
+    public void onDestroy() {
+        serviceIsRunning = false;
+        Log.d(TAG, "onDestroy: called, service is running? " + serviceIsRunning);
+        // If phone shuts down or something unexpected happens.
+        // Makes it possible to start as a foreground service again
+        ApplicationRunChecker.setForegroundServiceRunning(getApplicationContext(),
+                Globals.WORD_LEARNER_SERVICE_RUNNING, false);
+        super.onDestroy();
     }
-
-
 
     // ########## Binder Implementation ##########
     //region Binder implementation
+    // TODO: Find reference
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -113,11 +112,10 @@ public class WordLearnerService extends Service {
 
     // ########## Words operations ##########
     //region Words operations
-    public List<Word> getWords(){
+    public List<Word> getAllWords(){
         return allWords;
     }
 
-    // Check if word is already added
     public void addWord(String word){
         // If word already exists don't add it
         Word alreadyExistingWord = getWord(word.toLowerCase());
@@ -167,8 +165,8 @@ public class WordLearnerService extends Service {
         wordRepository.updateWord(word, new DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word updatedWord) {
-                // Since the object has been change you can't find it in the allwords
-                // unless you use getWord()
+                // Since the object has been changed you can't find it in allWords variable
+                // unless you use getWord(String word)
                 Word wordToGetIndex = getWord(updatedWord.getWord());
                 int i = allWords.indexOf(wordToGetIndex);
                 allWords.set(i, updatedWord);
@@ -177,14 +175,6 @@ public class WordLearnerService extends Service {
         });
     }
     //endregion
-
-    // TODO: See if this works
-    @Override
-    public void onDestroy() {
-        serviceIsRunning = false;
-        Log.d(TAG, "onDestroy: called, service is running? " + serviceIsRunning);
-        super.onDestroy();
-    }
 
     // ########## Broadcast Implementation ##########
     //region Broadcast Implementation
@@ -208,12 +198,12 @@ public class WordLearnerService extends Service {
     // ########## Setup words and populate db if need be ##########
     //region Populate db if first run else get words
     private void setupWords(){
-        boolean firstRun = ApplicationFirstRunChecker.getFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN);
-        if(firstRun){
+        boolean appFirstRun = ApplicationRunChecker.getFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN);
+        if(appFirstRun){
             Log.d(TAG, "First app run");
             addStartWordsToDb();
             // No longer first run
-            ApplicationFirstRunChecker.setFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN,false);
+            ApplicationRunChecker.setFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN,false);
         }
         else {
             wordRepository.getAllWords(new DbOperationsListener<List<Word>>() {
@@ -239,7 +229,7 @@ public class WordLearnerService extends Service {
                 public void getResult(Word wordObject) {
                     wordRepository.addWord(wordObject);
                     allWords.add(wordObject);
-                    // Notify for each word added
+                    // Notify for each word added, no message needed
                     broadcastTaskResult(null);
                 }
             });
@@ -254,11 +244,11 @@ public class WordLearnerService extends Service {
 
         setUpNotificationChannel();
 
-        Notification notification = setupNotification("Learn a new Word",
-                "Words will be displayed here");
+        Notification notification = setupNotification("Learn a new word!",
+                "Word to learn will be displayed here");
 
-        startForeground(142, notification);
-        notificationManagerCompat.notify(142, notification);
+        notificationManagerCompat.notify(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     private void setUpNotificationChannel(){
@@ -307,14 +297,14 @@ public class WordLearnerService extends Service {
                 e.printStackTrace();
             }
 
-            // Get an index no higher than the current size of list
+            // Get an index no higher than the current size of the allWords list
             int randWordIndex = new Random().nextInt(allWords.size());
             Word randomWord = allWords.get(randWordIndex);
 
-            Notification updatedNotification = setupNotification("Learn this word!",
+            Notification updatedNotification = setupNotification("New word to learn!",
                     randomWord.getWord());
 
-            notificationManagerCompat.notify(142, updatedNotification);
+            notificationManagerCompat.notify(NOTIFICATION_ID, updatedNotification);
 
             if (serviceIsRunning){
                 recursiveUpdateNotification();
