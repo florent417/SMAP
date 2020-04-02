@@ -37,6 +37,14 @@ public class MainActivity extends AppCompatActivity {
                         REQ_CODE_SIGN_IN);
             }
         });
+
+        Button listBtn = findViewById(R.id.listBtn);
+        listBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Something.class));
+            }
+        });
     }
 
     @Override
