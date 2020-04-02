@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Google translate saves the day -->
 <resources>
-    <!-- For test purposes, some words have been inserted. First activity should display just fine-->
     <string name="app_name">au523923 Aprendiz de Palabras 2</string>
     <string name="exitBtn">Salida</string>
     <string name="okBtn">OK</string>
@@ -10,11 +10,11 @@
     <string name="detailsNotes">Notas</string>
     <string name="mainTitle">Mis Palabras</string>
 
-    <!-- Don't know the translation -->
-    <string name="WORD_LIST_ITEM">wordListItem</string>
-    <string name="WORD_LIST_ARRAY">wordListArray</string>
-
     <string name="wordRatingTxt">Clasificación de palabras</string>
     <string name="imgDescription">La imagen dada la palabra</string>
     <string name="notesTitle">Notas</string>
+    <string name="addBtnTxt">Añadir</string>
+    <string name="searchHint">Busca y agrega palabras</string>
+    <string name="deleteBtnTxt">Borrar</string>
+    <string name="updateBtnTxt">Actualizar</string>
 </resources>

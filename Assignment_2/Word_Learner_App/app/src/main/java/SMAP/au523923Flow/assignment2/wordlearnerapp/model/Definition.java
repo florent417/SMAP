@@ -14,12 +14,15 @@ import com.google.gson.annotations.SerializedName;
 import static androidx.room.ForeignKey.CASCADE;
 
 // Extracted with: http://www.jsonschema2pojo.org/
-//@Entity(tableName = "definition", foreignKeys = @ForeignKey(entity = Word.class, parentColumns = "wordId", childColumns = "definitionId", onDelete = CASCADE))
+// Parcelable makes it possible to send objects to other activities, and save that object
+// for e.g. when the user flips the screen.
+// Parcelable implementation influenced by
+// https://stackoverflow.com/questions/7181526/how-can-i-make-my-custom-objects-parcelable
+// and (Some comments in the code from the post are copied here as well)
+// https://dzone.com/articles/using-android-parcel
 public class Definition implements Parcelable {
 
-    //@PrimaryKey(autoGenerate = true)
-    //public int definitionId;
-
+    // ########## Variables and database annotations ##########
     //region variables and database annotations
     @ColumnInfo(name = "type")
     @SerializedName("type")
@@ -47,6 +50,7 @@ public class Definition implements Parcelable {
     private String emoji;
     //endregion
 
+    // ########## Getters and setters ##########
     //region Getters and setters
     public String getType() {
         return type;
@@ -89,8 +93,8 @@ public class Definition implements Parcelable {
     }
     //endregion
 
+    // ########## Parcel and Parcelable implementation ##########
     //region Parcel and Parcelable implementation
-    // Not needed to implement
     @Override
     public int describeContents() {
         return 0;

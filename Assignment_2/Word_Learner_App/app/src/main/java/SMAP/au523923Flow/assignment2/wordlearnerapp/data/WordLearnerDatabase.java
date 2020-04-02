@@ -13,8 +13,7 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
 
 // Inspired by: https://developer.android.com/training/data-storage/room
-// Maybe change to include definitions
-@Database(entities = {Word.class}, version = 5)
+@Database(entities = {Word.class}, version = 6)
 @TypeConverters({DefinitionConverter.class})
 public abstract class WordLearnerDatabase extends RoomDatabase {
 

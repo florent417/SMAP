@@ -22,7 +22,7 @@
         android:padding="0dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/appMainTitle"
+        app:layout_constraintEnd_toStartOf="@+id/searchWordInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/word_item" />
@@ -32,25 +32,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:text="@string/mainTitle"
         android:textSize="@dimen/myWordsTitleSize"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/searchWordInput"
+        app:layout_constraintStart_toStartOf="@+id/searchWordInput"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/exitBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
         android:text="@string/exitBtn"
         android:textSize="@dimen/myWordsTitleSize"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/appMainTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/searchWordInput"
+        app:layout_constraintStart_toStartOf="@+id/searchWordInput" />
+
+    <Button
+        android:id="@+id/addBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/addBtnTxt"
+        android:textSize="@dimen/myWordsTitleSize"
+        app:layout_constraintBottom_toTopOf="@+id/exitBtn"
+        app:layout_constraintEnd_toEndOf="@+id/searchWordInput"
+        app:layout_constraintStart_toStartOf="@+id/searchWordInput" />
+
+    <EditText
+        android:id="@+id/searchWordInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
+        android:ems="10"
+        android:hint="@string/searchHint"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/addBtn"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
