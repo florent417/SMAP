@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\flole\\Desktop\\dev\\SMAP\\Assignment_1_Word_Learner_App\\Word_Learner_App\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-es-rES\\values-es-rES.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\flole\\Desktop\\dev\\SMAP\\Assignment_1_Word_Learner_App\\Word_Learner_App\\app\\src\\main\\res\\values-es-rES\\strings.xml",
+                    "from": {
+                        "startLines": "14,13,3,6,8,9,7,4,17,10,18,5,16",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "646,589,160,301,393,446,349,219,776,494,846,263,707",
+                        "endColumns": "57,55,57,46,51,46,42,42,68,50,44,36,67",
+                        "endOffsets": "699,640,213,343,440,488,387,257,840,540,886,295,770"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,113,169,227,274,326,373,416,459,528,579,624,661",
+                        "endColumns": "57,55,57,46,51,46,42,42,68,50,44,36,67",
+                        "endOffsets": "108,164,222,269,321,368,411,454,523,574,619,656,724"
+                    }
+                }
+            ]
+        }
+    ]
+}

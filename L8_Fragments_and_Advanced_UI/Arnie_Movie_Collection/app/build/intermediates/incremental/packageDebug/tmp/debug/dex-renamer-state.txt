@@ -1,0 +1,4 @@
+#Thu Mar 19 20:45:20 CET 2020
+base.0=C\:\\Users\\flole\\Desktop\\dev\\SMAP\\L8_Fragments_and_Advanced_UI\\Arnie_Movie_Collection\\app\\build\\intermediates\\dex\\debug\\out\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
