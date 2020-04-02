@@ -1,0 +1,4 @@
+#Thu Mar 26 14:01:16 CET 2020
+base.0=C\:\\Users\\flole\\Desktop\\dev\\SMAP\\L9_Sensors_Location_and_Maps\\Map_me\\app\\build\\intermediates\\dex\\debug\\out\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
