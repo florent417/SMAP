@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Network Management</string>
+    <string name="connBtnTxt">Check Connectivity</string>
+    <string name="weatherBtnTxt">Get Weather</string>
+</resources>

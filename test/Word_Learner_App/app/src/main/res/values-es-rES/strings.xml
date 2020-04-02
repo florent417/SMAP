@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- For test purposes, some words have been inserted. First activity should display just fine-->
+    <string name="app_name">Aprendiz de Palabras</string>
+    <string name="exitBtn">Salida</string>
+    <string name="okBtn">OK</string>
+    <string name="cancelBtn">Cancelar</string>
+    <string name="editBtn">Editar</string>
+    <string name="description">Descripción</string>
+    <string name="detailsNotes">Notas</string>
+    <string name="mainTitle">Mis Palabras</string>
+
+    <!-- Don't know the translation -->
+    <string name="WORD_LIST_ITEM">wordListItem</string>
+    <string name="WORD_LIST_ARRAY">wordListArray</string>
+
+    <string name="wordRatingTxt">Clasificación de palabras</string>
+    <string name="imgDescription">La imagen dada la palabra</string>
+    <string name="notesTitle">Notas</string>
+</resources>

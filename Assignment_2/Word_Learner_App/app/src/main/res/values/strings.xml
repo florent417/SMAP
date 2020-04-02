@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">au523923 Word Learner 2</string>
+    <string name="exitBtn">Exit</string>
+    <string name="okBtn">OK</string>
+    <string name="cancelBtn">Cancel</string>
+    <string name="editBtn">Edit</string>
+    <string name="description">Description</string>
+    <string name="detailsNotes">Notes</string>
+    <string name="mainTitle">My Words</string>
+
+    <string name="wordRatingTxt">Word Rating</string>
+    <string name="imgDescription">The image given the word</string>
+    <string name="notesTitle">Notes</string>
+    <string name="addBtnTxt">Add</string>
+    <string name="searchHint">Search and add words</string>
+    <string name="deleteBtnTxt">Delete</string>
+    <string name="updateBtnTxt">Update</string>
+</resources>
