@@ -1,4 +1,4 @@
-package SMAP.au523923Flow.assignment2.wordlearnerapp;
+package SMAP.au523923Flow.assignment2.wordlearnerapp.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.adapter.WordListAdapter;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService.LocalBinder;

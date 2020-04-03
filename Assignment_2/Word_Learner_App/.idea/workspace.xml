@@ -9,12 +9,44 @@
   </component>
   <component name="AndroidLogFilters">
     <option name="TOOL_WINDOW_LOG_LEVEL" value="error" />
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Firebase" />
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7be8e8b7-6e7d-4678-b6db-1c151ad6fd5f" name="Default Changelist" comment="/">
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/jarAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/DetailsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/activity/DetailsActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/EditActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/activity/EditActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/ListActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/activity/ListActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/WordListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/adapter/WordListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/data/WordLearnerDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/data/WordLearnerDatabase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/data/WordRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/data/WordRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/service/WordLearnerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/service/WordLearnerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/utils/DbOperationsListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/utils/OWLBOTResponseListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/utils/WordAPIHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/api/WordAPIHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/utils/WordJsonParser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_details.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_details.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_details.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_details.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-es-rES/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-es-rES/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,7 +54,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="HYFDU19111009914" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Nexus_5X_API_29_x86" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -68,11 +100,11 @@
     <property name="SHOW_ALL_PROCESSES" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/java" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/DilaksunBavarajan_au568978_ITSMAP20_fall_Assignment2/DilaksunBavarajan_au568978_Assignment2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="PsdUISettings">
@@ -185,23 +217,23 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/ListActivity.java</url>
-          <line>97</line>
+          <url>file://$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/activity/ListActivity.java</url>
+          <line>98</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/EditActivity.java</url>
+          <url>file://$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/activity/EditActivity.java</url>
           <line>121</line>
           <option name="timeStamp" value="73" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/service/WordLearnerService.java</url>
-          <line>59</line>
+          <line>57</line>
           <option name="timeStamp" value="78" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/SMAP/au523923Flow/assignment2/wordlearnerapp/service/WordLearnerService.java</url>
-          <line>81</line>
+          <line>79</line>
           <option name="timeStamp" value="79" />
         </line-breakpoint>
       </breakpoints>

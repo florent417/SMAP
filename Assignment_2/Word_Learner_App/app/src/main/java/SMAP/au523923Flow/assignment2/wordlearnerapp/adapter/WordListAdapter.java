@@ -1,4 +1,4 @@
-package SMAP.au523923Flow.assignment2.wordlearnerapp;
+package SMAP.au523923Flow.assignment2.wordlearnerapp.adapter;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 
 import java.util.List;
@@ -30,22 +31,22 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         void onItemListClick(int position);
     }
 
-    WordListAdapter(Context context, List<Word> wordListItems) {
+    public WordListAdapter(Context context, List<Word> wordListItems) {
         this.wordListItems = wordListItems;
         this.context = context;
     }
 
     // ########## Getters and setters ##########
     //region Getters and Setters
-    void setOnItemListClickListener(OnItemListClickListener itemListClickListener){
+    public void setOnItemListClickListener(OnItemListClickListener itemListClickListener){
         mOnItemListClick = itemListClickListener;
     }
 
-    Word getWordListItem(int position){
+    public Word getWordListItem(int position){
         return wordListItems.get(position);
     }
 
-    void setWordList(List<Word> wordList) {
+    public void setWordList(List<Word> wordList) {
         Log.d(TAG, "Adapter: WordList updated");
         wordListItems = wordList;
     }

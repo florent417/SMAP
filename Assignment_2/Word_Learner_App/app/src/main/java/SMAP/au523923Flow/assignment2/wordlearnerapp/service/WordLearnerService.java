@@ -26,10 +26,8 @@ import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.data.WordRepository;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.ApplicationRunChecker;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DbOperationsListener;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.OWLBOTResponseListener;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.WordAPIHelper;
+import SMAP.au523923Flow.assignment2.wordlearnerapp.api.WordAPIHelper;
 
 public class WordLearnerService extends Service {
     private static final String TAG = "WordLearnerService";
@@ -122,18 +120,18 @@ public class WordLearnerService extends Service {
         // If word already exists don't add it
         Word alreadyExistingWord = getWord(word.toLowerCase());
         if (alreadyExistingWord != null){
-            broadcastTaskResult("Word: " + alreadyExistingWord.getWord() + " already exists in the app");
+            broadcastTaskResult(getResources().getString(R.string.word_already_exists));
         }
         else {
-            WordAPIHelper.getInstance().getWordFromOWLBOT(word.toLowerCase(), new OWLBOTResponseListener<Word>() {
+            WordAPIHelper.getInstance().getWordFromOWLBOT(word.toLowerCase(), new WordAPIHelper.OWLBOTResponseListener<Word>() {
                 @Override
                 public void getResult(Word wordObject) {
                     if (wordObject != null) {
                         wordRepository.addWord(wordObject);
                         allWords.add(wordObject);
-                        broadcastTaskResult(wordObject.getWord() + " added");
+                        broadcastTaskResult(wordObject.getWord() + " " + getResources().getString(R.string.added));
                     } else {
-                        broadcastTaskResult("Word doesn't exist");
+                        broadcastTaskResult(getResources().getString(R.string.word_does_not_exist));
                     }
                 }
             });
@@ -155,18 +153,18 @@ public class WordLearnerService extends Service {
     }
 
     public void deleteWord(Word word){
-        wordRepository.deleteWord(word, new DbOperationsListener<Word>() {
+        wordRepository.deleteWord(word, new WordRepository.DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word deletedWord) {
                 Log.d(TAG, "DbOperation delete response: word deleted: " + deletedWord.getWord());
                 allWords.remove(deletedWord);
-                broadcastTaskResult("Deleted word: " + deletedWord.getWord());
+                broadcastTaskResult(getResources().getString(R.string.deleted_word) + " " + deletedWord.getWord());
             }
         });
     }
 
     public void updateWord(Word word){
-        wordRepository.updateWord(word, new DbOperationsListener<Word>() {
+        wordRepository.updateWord(word, new WordRepository.DbOperationsListener<Word>() {
             @Override
             public void DbOperationDone(Word updatedWord) {
                 Log.d(TAG, "DbOperation update response: word updated: " + updatedWord.getWord());
@@ -175,7 +173,7 @@ public class WordLearnerService extends Service {
                 Word wordToGetIndex = getWord(updatedWord.getWord());
                 int i = allWords.indexOf(wordToGetIndex);
                 allWords.set(i, updatedWord);
-                broadcastTaskResult("Updated word: " + updatedWord.getWord());
+                broadcastTaskResult(getResources().getString(R.string.updated_word) + " " + updatedWord.getWord());
             }
         });
     }
@@ -211,15 +209,15 @@ public class WordLearnerService extends Service {
             ApplicationRunChecker.setFirstTimeRun(getApplicationContext(),Globals.IS_FIRST_RUN,false);
         }
         else {
-            wordRepository.getAllWords(new DbOperationsListener<List<Word>>() {
+            wordRepository.getAllWords(new WordRepository.DbOperationsListener<List<Word>>() {
                 @Override
                 public void DbOperationDone(List<Word> allWordsFromDb) {
                     if (allWordsFromDb != null && allWordsFromDb.size() != 0){
                         allWords = allWordsFromDb;
-                        broadcastTaskResult("Got all words from Db");
+                        broadcastTaskResult(getResources().getString(R.string.got_all_words_from_db));
                     }
                     else {
-                        broadcastTaskResult("No words are present in Db");
+                        broadcastTaskResult(getResources().getString(R.string.no_words_present_in_db));
                     }
                 }
             });
@@ -229,7 +227,7 @@ public class WordLearnerService extends Service {
     private void addStartWordsToDb() {
         Log.d(TAG, "First app run. Populating db with start words from original csv file");
         for (String word: Globals.START_WORDS) {
-            WordAPIHelper.getInstance().getWordFromOWLBOT(word, new OWLBOTResponseListener<Word>() {
+            WordAPIHelper.getInstance().getWordFromOWLBOT(word, new WordAPIHelper.OWLBOTResponseListener<Word>() {
                 @Override
                 public void getResult(Word wordObject) {
                     wordRepository.addWord(wordObject);
@@ -249,8 +247,8 @@ public class WordLearnerService extends Service {
 
         setUpNotificationChannel();
 
-        Notification notification = setupNotification("Learn a new word!",
-                "Word to learn will be displayed here");
+        Notification notification = setupNotification(getResources().getString(R.string.notification_initial_title),
+                getResources().getString(R.string.notification_initial_content));
 
         notificationManagerCompat.notify(NOTIFICATION_ID, notification);
         startForeground(NOTIFICATION_ID, notification);
@@ -308,12 +306,12 @@ public class WordLearnerService extends Service {
                 int randWordIndex = new Random().nextInt(allWords.size());
                 Word randomWord = allWords.get(randWordIndex);
 
-                updatedNotification = setupNotification("New word to learn!",
+                updatedNotification = setupNotification(getResources().getString(R.string.notification_new_word_title),
                         randomWord.getWord());
             }
             else {
-                updatedNotification = setupNotification("No words to learn",
-                        "No words exist in your app!");
+                updatedNotification = setupNotification(getResources().getString(R.string.notification_no_words_to_learn_title),
+                        getResources().getString(R.string.notification_no_words_to_learn_content));
             }
 
             notificationManagerCompat.notify(NOTIFICATION_ID, updatedNotification);

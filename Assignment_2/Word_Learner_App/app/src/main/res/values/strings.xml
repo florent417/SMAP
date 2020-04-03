@@ -15,4 +15,18 @@
     <string name="searchHint">Search and add words</string>
     <string name="deleteBtnTxt">Delete</string>
     <string name="updateBtnTxt">Update</string>
+
+    <string name="word_already_exists">Word already exists in the app</string>
+    <string name="added">added</string>
+    <string name="word_does_not_exist">Word does not exist</string>
+    <string name="deleted_word">Deleted word:</string>
+    <string name="updated_word">Updated word:</string>
+    <string name="got_all_words_from_db">Got all words from Db</string>
+    <string name="no_words_present_in_db">No words are present in Db</string>
+    <string name="notification_initial_title">Learn a new word!</string>
+    <string name="notification_initial_content">Word to learn will be displayed here</string>
+    <string name="notification_new_word_title">New word to learn!</string>
+    <string name="notification_no_words_to_learn_title">No words to learn</string>
+    <string name="notification_no_words_to_learn_content">No words exist in your app!</string>
+
 </resources>

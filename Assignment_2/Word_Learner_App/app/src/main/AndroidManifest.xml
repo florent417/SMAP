@@ -12,9 +12,9 @@
         android:roundIcon="@mipmap/word_learner_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.EditActivity"/>
-        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.DetailsActivity" />
-        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.ListActivity">
+        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.activity.EditActivity"/>
+        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.activity.DetailsActivity" />
+        <activity android:name="SMAP.au523923Flow.assignment2.wordlearnerapp.activity.ListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

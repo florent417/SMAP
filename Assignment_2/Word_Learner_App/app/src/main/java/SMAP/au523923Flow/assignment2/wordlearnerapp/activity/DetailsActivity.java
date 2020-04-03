@@ -1,4 +1,4 @@
-package SMAP.au523923Flow.assignment2.wordlearnerapp;
+package SMAP.au523923Flow.assignment2.wordlearnerapp.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import SMAP.au523923Flow.assignment2.wordlearnerapp.R;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.service.WordLearnerService;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;

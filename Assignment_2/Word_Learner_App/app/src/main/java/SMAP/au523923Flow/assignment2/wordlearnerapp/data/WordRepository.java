@@ -1,17 +1,10 @@
 package SMAP.au523923Flow.assignment2.wordlearnerapp.data;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import androidx.room.Update;
-
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
-import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.DbOperationsListener;
 
 // The mindset behind making the repository and the callback flow
 // is first of all to separate functionality, so async tasks implementations to the
@@ -27,6 +20,10 @@ public class WordRepository {
     private static final String TAG = "WordRepository";
 
     private WordDAO wordDAO;
+
+    public interface DbOperationsListener<T> {
+        void DbOperationDone(T object);
+    }
 
     // ########## Async task executors ##########
     //region Async task executors

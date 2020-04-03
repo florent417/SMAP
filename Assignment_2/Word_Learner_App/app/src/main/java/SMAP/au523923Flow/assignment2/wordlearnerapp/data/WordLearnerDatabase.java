@@ -6,8 +6,6 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
-import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Definition;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.DefinitionConverter;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.model.Word;
 import SMAP.au523923Flow.assignment2.wordlearnerapp.utils.Globals;

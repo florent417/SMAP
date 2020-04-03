@@ -17,4 +17,17 @@
     <string name="searchHint">Busca y agrega palabras</string>
     <string name="deleteBtnTxt">Borrar</string>
     <string name="updateBtnTxt">Actualizar</string>
+
+    <string name="word_already_exists">La palabra ya existe en la aplicación</string>
+    <string name="added">sumado</string>
+    <string name="word_does_not_exist">La palabra no existe</string>
+    <string name="deleted_word">Palabra eliminada:</string>
+    <string name="updated_word">Palabra actualizada:</string>
+    <string name="got_all_words_from_db">Tengo todas las palabras de Db</string>
+    <string name="no_words_present_in_db">No hay palabras presentes en Db</string>
+    <string name="notification_initial_title">Aprende una nueva palabra!</string>
+    <string name="notification_initial_content">La palabra para aprender se mostrará aquí</string>
+    <string name="notification_new_word_title">Nueva palabra para aprender!</string>
+    <string name="notification_no_words_to_learn_title">No hay palabras para aprender</string>
+    <string name="notification_no_words_to_learn_content">No existen palabras en tu aplicación!</string>
 </resources>
