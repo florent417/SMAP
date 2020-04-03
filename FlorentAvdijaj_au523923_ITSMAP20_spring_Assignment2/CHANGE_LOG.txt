@@ -1,0 +1,24 @@
+Changes made for this assignment
+
+- Very good comment about my utils folder being used as a "leftover class folder", so i decided to change it up and seperate the classes and methods even further, 
+and further refactor the project structure, so that more packages were introduced
+
+- Stupid mistake from me, it didn't cross my mind at any point in time that toast messages to the user have to be translated as well... So that has been added now
+as well
+
+- The folder and zip file for the project have been renamed to fit the requirements
+
+Changes that were not made
+
+- I see how it makes sense to split the models/dataclasses up so that you have a Word dataclass for the API calls, and one for the database. I did implement it 
+this time since first of all it works, and second of all my focus was to make it into a single class, since there is not much of a difference between the 2 models
+and what they include (sure there are some things that can be left out and don't need to be included for either model, but i decided to keep it in a single class).
+It is a very good point though! And i will definately think about it in the future. 
+
+- I didn't remove my comments, since as the reviewer says it is a subjective thing, and after looking it up it generally is looked at as bad practice to include
+to many comments. For the comments that explain what happens in detail in some sections i don't think they need to be removed, they probably could be condensed
+but for this assigment (and probably in general as well) i would rather have a bit more code for some complicated parts, than to have less. Now for the special
+notation of sections of having both the "########## (Some section or variables) ##########" and the regions as well, i see how that can be redudant, and not 
+necessary. The reason why it was done this way is because, first of all regions are just nice to have since you can "hide" them away, and for the other notation
+that is done to create further subsections in the code. There is no real explanation to it, it is just some extra structure and makes it easier to visually 
+divide the code into sections of functionality (e.g. UI Setup), so it is more of a visual factor than one that explains the code. 
