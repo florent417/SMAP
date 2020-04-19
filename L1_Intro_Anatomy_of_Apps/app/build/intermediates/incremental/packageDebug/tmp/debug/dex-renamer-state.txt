@@ -1,0 +1,4 @@
+#Thu Jan 30 10:28:36 CET 2020
+base.0=E\:\\GIT_Skole\\SMAP\\L1_Intro_Anatomy_of_Apps\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
