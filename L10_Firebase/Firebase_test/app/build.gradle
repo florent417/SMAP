@@ -5,6 +5,12 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    // Butterknife requires Java 8.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "smap.au523923.lab9.firebaseapp"
         minSdkVersion 16
@@ -27,6 +33,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
     implementation 'com.google.firebase:firebase-analytics:17.3.0'
     implementation 'androidx.multidex:multidex:2.0.1'
